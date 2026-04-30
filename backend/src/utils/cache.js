@@ -60,9 +60,17 @@ class CacheManager {
   async invalidatePattern(pattern) {
     if (!this.client.isOpen) return;
     try {
-      const keys = await this.client.keys(pattern);
+      const keys = [];
+      for await (const key of this.client.scanIterator({
+        MATCH: pattern,
+        COUNT: 100
+      })) {
+        keys.push(key);
+      }
+      
       if (keys.length > 0) {
         await this.client.del(keys);
+        console.log(`Invalidated ${keys.length} keys matching pattern: ${pattern}`);
       }
     } catch (err) {
       console.error('Cache invalidate error:', err);

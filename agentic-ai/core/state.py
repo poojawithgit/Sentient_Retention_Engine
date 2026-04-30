@@ -53,5 +53,7 @@ class RetentionState(TypedDict):
     technical_failure: bool
     
     # 9. Output & Audit
+    raw_customer_data: Optional[Dict[str, Any]]
     output_payload: Dict[str, Any]
     audit_log: List[Dict[str, Any]]
+    loop_count: int

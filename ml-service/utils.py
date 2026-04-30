@@ -2,6 +2,21 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+import logging
+import json
+from datetime import datetime
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("ml-service")
+
+def log_event(event_type: str, data: dict):
+    log_entry = {
+        "timestamp": datetime.now().isoformat(),
+        "event_type": event_type,
+        **data
+    }
+    logger.info(json.dumps(log_entry))
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FEATURES_PATH = os.path.join(BASE_DIR, "models", "feature_names.pkl")

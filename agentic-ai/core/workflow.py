@@ -52,8 +52,10 @@ def build_workflow():
     
     # 3. Conditional Routing Function (Node 5)
     def route_risk(state: RetentionState) -> str:
-        score = state.get("churn_score", 0.0)
-        return "high_risk" if score > 0.65 else "low_risk"
+        score = state.get("churn_score", 0.5)
+        if score > 0.65:
+            return "high_risk"
+        return "low_risk"
 
     workflow.add_conditional_edges(
         "rag",
@@ -64,10 +66,13 @@ def build_workflow():
         }
     )
     
-    # 4. High Risk Loop logic
+    # 4. Lane Edges (6 -> 7 -> 8)
+    # High Risk Lane: 6a -> 7a -> 8a
+    workflow.add_edge("digital_twin_sim", "retention_offer_tool")
+    workflow.add_edge("retention_offer_tool", "impact_eval_high")
+    
     def high_risk_loop_condition(state: RetentionState) -> str:
         iters = state.get("simulation_iterations", 0)
-        # In a real app we'd check if the user 'accepted' from the response list
         responses = state.get("responses", [])
         if responses and "accept" in responses[-1]:
             return "end_loop"
@@ -75,8 +80,6 @@ def build_workflow():
             return "end_loop"
         return "continue_loop"
 
-    workflow.add_edge("digital_twin_sim", "retention_offer_tool")
-    workflow.add_edge("retention_offer_tool", "impact_eval_high")
     workflow.add_conditional_edges(
         "impact_eval_high",
         high_risk_loop_condition,
@@ -86,15 +89,16 @@ def build_workflow():
         }
     )
     
-    # 5. Low Risk Loop Logic
+    # 5. Low Risk Lane: 6b -> 7b -> 8b
+    workflow.add_edge("nurture_sim", "engagement_api")
+    workflow.add_edge("engagement_api", "impact_eval_low")
+    
     def low_risk_loop_condition(state: RetentionState) -> str:
         iters = state.get("simulation_iterations", 0)
         if iters >= 3:
             return "end_loop"
         return "continue_loop"
         
-    workflow.add_edge("nurture_sim", "engagement_api")
-    workflow.add_edge("engagement_api", "impact_eval_low")
     workflow.add_conditional_edges(
         "impact_eval_low",
         low_risk_loop_condition,
@@ -119,12 +123,12 @@ def build_workflow():
         "business_rules",
         route_business_rules,
         {
-            "pass": "output_formatter",
+            "pass": "audit_log",
             "human": "human_handoff"
         }
     )
     
-    workflow.add_edge("output_formatter", "evaluator")
+    workflow.add_edge("audit_log", "evaluator")
     workflow.add_edge("human_handoff", "final_output")
     
     # 8. Evaluator / ROI Critic Conditional
@@ -139,21 +143,33 @@ def build_workflow():
         "evaluator",
         route_evaluator,
         {
-            "pass": "audit_log",
+            "pass": "output_formatter",
             "fail": "retry_fallback",
             "sys_err": "override_code"
         }
     )
     
     # 9. Retry Fallback Logic
-    # Simplified here, goes to human_handoff after failure
     workflow.add_edge("retry_fallback", "human_handoff")
     
-    # 10. Override and Audit Endpoints
-    workflow.add_edge("override_code", "audit_log")
+    # 10. Override and Output Endpoints
     workflow.add_edge("override_code", "final_output")
-    workflow.add_edge("audit_log", "final_output")
+    workflow.add_edge("output_formatter", "final_output")
     workflow.add_edge("final_output", "feedback_capture")
-    workflow.add_edge("feedback_capture", END)
+    
+    def route_feedback(state: RetentionState):
+        if state.get("loop_count", 0) < 2:  # Allow up to 2 loops for refinement
+            print(f"[LOOP] Re-entering classifier (Loop {state.get('loop_count')})")
+            return "classifier"
+        return "end"
+
+    workflow.add_conditional_edges(
+        "feedback_capture",
+        route_feedback,
+        {
+            "classifier": "classifier",
+            "end": END
+        }
+    )
     
     return workflow.compile()
