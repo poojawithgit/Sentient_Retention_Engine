@@ -200,10 +200,10 @@ pip install -r requirements.txt
 
 # Start service
 python main.py
-# Service runs on the configured ML service port
+# Service runs on the configured ML service port (see .env.example)
 
 # Optional: Train model
-curl -X POST http://localhost:[ML_PORT]/train
+curl -X POST http://localhost:<ML_SERVICE_PORT>/train
 ```
 
 ### 3. Backend Setup
@@ -220,7 +220,7 @@ cp .env.example .env
 
 # Start server
 npm start
-# Server runs on the configured Backend port
+# Server runs on the configured Backend port (see .env.example)
 ```
 
 ### 4. Frontend Setup
@@ -232,8 +232,8 @@ cd apps/frontend
 npm install
 
 # Configure environment
-# Create .env file:
-# VITE_API_URL=http://localhost:[BACKEND_PORT]
+# Create .env file based on .env.example:
+# VITE_API_URL=http://localhost:<BACKEND_PORT>
 
 # Start development server
 npm run dev
