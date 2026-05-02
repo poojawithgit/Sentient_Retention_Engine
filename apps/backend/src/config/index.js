@@ -4,7 +4,7 @@ const config = {
   port: process.env.PORT || 8000,
   env: process.env.NODE_ENV || 'development',
   databaseUrl: process.env.DATABASE_URL,
-  redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
+  redisUrl: process.env.REDIS_URL,
   services: {
     prediction: process.env.PREDICTION_SERVICE_URL || 'http://localhost:8001',
     agent: process.env.AGENT_SERVICE_URL || 'http://localhost:8003',

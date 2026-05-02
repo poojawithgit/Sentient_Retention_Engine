@@ -1,312 +1,111 @@
-# Sentient Retention Engine
+# 🚀 Sentient Retention Engine
 
-A production-ready Agentic AI system for SaaS Churn Prediction and Retention. This platform combines Machine Learning for churn prediction, Agentic Decision-Making for action selection, and Digital Twin Simulation for evaluating retention strategies before execution.
+> **The Intelligent SaaS Churn Defense System.**
 
-## Architecture Overview
+A production-grade Agentic AI platform designed to predict, simulate, and prevent SaaS customer churn. Combining state-of-the-art Machine Learning with autonomous decision-making agents and Digital Twin simulations.
 
-┌─────────────────────────────────────────────────────────────────┐
-│                      FRONTEND (React)                          │
-│                  Dashboard with Tailwind CSS                   │
-└─────────────────────────────┬───────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                   BACKEND (Node.js/Express)                    │
-│              REST API + Agent Orchestration                    │
-└─────────────────────────────┬───────────────────────────────────┘
-                              │
-              ┌───────────────┴───────────────┐
-              ▼                               ▼
-┌─────────────────────────┐     ┌─────────────────────────────┐
-│  ML SERVICE             │     │  DIGITAL TWIN ENGINE        │
-│  (FastAPI + scikit)     │     │  (Python Simulation)        │
-│  - Churn Prediction     │     │  - Action Evaluation        │
-│  - Risk Classification  │     │  - Strategy Comparison      │
-└─────────────────────────┘     └─────────────────────────────┘
-              │
-              ▼
-┌─────────────────────────┐
-│  POSTGRESQL DATABASE   │
-│  - User Data            │
-│  - Agent Memory         │
-│  - Decision Logs        │
-└─────────────────────────┘
+---
 
-## Core Features
+## 🏗️ System Architecture
 
-### 1. ML-Based Churn Prediction
+The engine is built as a highly modular, secure microservices architecture:
 
-- Uses features: usage, complaints, payment_delay
-- Returns churn probability (0-1) with risk level (LOW/MEDIUM/HIGH)
-- Fallback mock prediction when ML service unavailable
-
-### 2. Agentic AI Engine
-
-Implements a full decision-making loop:
-
-1. **OBSERVE** - Receive user data + churn risk from ML
-2. **THINK** - Interpret risk level (LOW < 0.4, MEDIUM 0.4-0.7, HIGH > 0.7)
-3. **SIMULATE** - Digital Twin evaluates all actions
-4. **DECIDE** - Select action with lowest simulated churn
-5. **EXPLAIN** - Generate human-readable reasoning
-6. **ACT** - Return structured response
-
-### 3. Digital Twin Simulation
-
-Evaluates retention strategies before execution:
-
-- **DISCOUNT** - 25% base churn reduction
-- **EMAIL** - 10% base churn reduction
-- **NONE** - No intervention
-
-### 4. Memory System
-
-Stores past decisions for learning and audit:
-
-- userId, action, result, churn_risk, expected_churn
-
-## Project Structure
-
-sentient-retention-engine/
-├── apps/
-│   ├── frontend/                 # React + Tailwind CSS Dashboard
-│   ├── backend/                  # Node.js + Express API Gateway
-│   ├── ml-service/               # Python + FastAPI Prediction Service
-│   └── agentic-ai/               # LangGraph Orchestrator & Digital Twin
-├── infra/
-│   ├── database/                 # PostgreSQL Schema & migrations
-│   ├── monitoring/               # Prometheus & Grafana configurations
-│   └── nginx/                    # Reverse proxy configuration
-├── docker-compose.yml            # Container orchestration
-└── README.md
-
-## API Endpoints
-
-### POST /api/v1/predict
-
-Get churn prediction from ML service.
-
-**Request:**
-
-```json
-{
-  "user_id": "user_001",
-  "usage": 15,
-  "complaints": 3,
-  "payment_delay": 2
-}
+```mermaid
+graph TD
+    User([User]) --> Frontend[React Dashboard]
+    Frontend --> Backend[Node.js API Gateway]
+    
+    subgraph "Intelligent Core"
+        Backend --> ML[ML Service - FastAPI]
+        Backend --> AI[Agentic AI - LangGraph]
+        AI --> DT[Digital Twin - Simulation]
+    end
+    
+    Backend --> DB[(PostgreSQL)]
+    Backend --> Redis[(Redis - Caching)]
 ```
 
-**Response:**
+- **Frontend**: Real-time analytics dashboard with deep-dive risk inspection.
+- **Backend**: Secure API gateway with Role-Based Access Control (RBAC).
+- **ML Service**: Predictive engine analyzing usage patterns and risk indicators.
+- **Agentic AI**: Multi-agent system that observes, thinks, and decides on retention strategies.
+- **Digital Twin**: High-fidelity simulation environment to validate actions before deployment.
 
-```json
-{
-  "user_id": "user_001",
-  "churn_risk": 0.65,
-  "risk_level": "MEDIUM",
-  "confidence": 0.85
-}
-```
+---
 
-### POST /api/v1/simulate
+## ✨ Key Features
 
-Run Digital Twin simulation for all actions.
+### 1. Adaptive Risk Prediction
 
-**Request:**
+Real-time churn probability scoring (LOW/MEDIUM/HIGH) based on usage metrics, support ticket volume, and payment behavior.
 
-```json
-{
-  "user_id": "user_001",
-  "churn_risk": 0.65
-}
-```
+### 2. Autonomous Agentic Loop
 
-### POST /api/v1/agent
+The system executes a closed-loop decision process:
 
-Full agent loop - predict, simulate, decide, explain.
+- **OBSERVE**: Intake customer telemetry.
+- **THINK**: Interpret risk context and historical outcomes.
+- **SIMULATE**: Run strategies through the Digital Twin.
+- **DECIDE**: Select the optimal intervention (e.g., Discount, Proactive Outreach).
 
-**Request:**
+### 3. Digital Twin Validation
 
-```json
-{
-  "user_id": "user_001",
-  "usage": 15,
-  "complaints": 3,
-  "payment_delay": 2
-}
-```
+Every retention action is simulated in a sandbox to estimate churn reduction percentage before a single dollar is spent on discounts.
 
-**Response:**
+### 4. Enterprise-Grade Security
 
-```json
-{
-  "user_id": "user_001",
-  "churn_risk": 0.65,
-  "risk_level": "MEDIUM",
-  "simulations": {
-    "DISCOUNT": { "simulated_churn": 0.49, "reduction_percentage": 24.6 },
-    "EMAIL": { "simulated_churn": 0.59, "reduction_percentage": 9.2 },
-    "NONE": { "simulated_churn": 0.65, "reduction_percentage": 0 }
-  },
-  "best_action": "DISCOUNT",
-  "expected_churn": 0.49,
-  "reason": "User has MEDIUM churn risk (65.0%), proactive engagement recommended...",
-  "timestamp": "2024-01-01T00:00:00Z"
-}
-```
+- **RBAC**: Multi-role system (Admin, Specialist) enforcing least-privilege access.
+- **IDOR Protection**: Identity-validated data access for all sensitive endpoints.
+- **Zero-Trust Config**: No hardcoded secrets; strictly environment-variable driven.
 
-### POST /api/v1/action
+---
 
-Execute a retention action (mock).
-
-### POST /api/v1/memory
-
-Store decision in memory.
-
-### GET /api/v1/memory/:userId
-
-Retrieve memory for a user.
-
-## Setup Instructions
+## 🚦 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+
-- Python 3.9+
-- PostgreSQL 14+
-- Docker & Docker Compose (optional, for containerized setup)
+- Node.js 20+
+- Python 3.10+
+- Docker & Docker Compose
+- PostgreSQL 15+
 
-### 1. Database Setup
-
-```bash
-# Create PostgreSQL database
-psql -U postgres -c "CREATE DATABASE sentient_retention;"
-
-# Run schema
-psql -U postgres -d sentient_retention -f infra/database/schema.sql
-```
-
-### 2. ML Service Setup
-
-```bash
-cd apps/ml-service
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start service
-python main.py
-# Service runs on the configured ML service port (see .env.example)
-
-# Optional: Train model
-curl -X POST http://localhost:<ML_SERVICE_PORT>/train
-```
-
-### 3. Backend Setup
-
-```bash
-cd apps/backend
-
-# Install dependencies
-npm install
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your settings (including PORT and service URLs)
-
-# Start server
-npm start
-# Server runs on the configured Backend port (see .env.example)
-```
-
-### 4. Frontend Setup
-
-```bash
-cd apps/frontend
-
-# Install dependencies
-npm install
-
-# Configure environment
-# Create .env file based on .env.example:
-# VITE_API_URL=http://localhost:<BACKEND_PORT>
-
-# Start development server
-npm run dev
-# Frontend dashboard is accessible via the development server
-```
-
-## Running the Full System
-
-### Option A: Local Development
-
-```bash
-# Start PostgreSQL
-pg_ctl -D /path/to/data start
-# Start ML Service
-cd apps/ml-service && python main.py
-# Start Backend
-cd apps/backend && npm start
-# Start Frontend
-cd apps/frontend && npm run dev
-```
-
-Access the dashboard via the URL provided by the frontend development server.
-
-### Option B: Docker Compose
-
-Run the entire stack using:
+### 1. One-Command Setup (Docker)
 
 ```bash
 docker-compose up --build
 ```
 
-## How Agent Flow Works
+### 2. Manual Setup
 
-User Input (usage, complaints, payment_delay)
-         │
-         ▼
-┌─────────────────────────────────────┐
-│         ML SERVICE                   │
-│   Predict churn probability         │
-│   usage=15, complaints=3, delay=2   │
-│   → churn_risk = 0.65               │
-└─────────────────────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────┐
-│       AGENTIC AI ENGINE             │
-│                                     │
-│ OBSERVE: Receive user data          │
-│ THINK:   Risk level = MEDIUM        │
-│ SIMULATE:                          │
-│   DISCOUNT → 0.49 (24.6% reduction) │
-│   EMAIL   → 0.59 (9.2% reduction)   │
-│   NONE    → 0.65 (no change)        │
-│ DECIDE:  Best = DISCOUNT            │
-│ EXPLAIN: Generate reasoning         │
-│ ACT:     Return structured response │
-└─────────────────────────────────────┘
-          │
-          ▼
-┌─────────────────────────────────────┐
-│       FRONTEND DASHBOARD            │
-│   Display risk, simulations,        │
-│   best action, and AI reasoning     │
-└─────────────────────────────────────┘
+Refer to the detailed [Setup Guide](./docs/SETUP.md) for local development configurations.
 
-## Technology Stack
+---
 
-- **Frontend**: React 18, Tailwind CSS, Recharts
-- **Backend**: Node.js, Express, Axios
-- **ML Service**: Python, FastAPI, scikit-learn
-- **Database**: PostgreSQL
-- **Orchestration**: LangGraph, Docker Compose
+## 🛠️ Technology Stack
 
-## License
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 18, Tailwind CSS, Recharts, Framer Motion |
+| **Backend** | Node.js, Express, JWT, Redis |
+| **AI/ML** | FastAPI, scikit-learn, LangGraph, Groq/OpenAI |
+| **Infrastructure** | Docker, Nginx, PostgreSQL, GitHub Actions |
 
-MIT License
+---
+
+## 📖 Documentation
+
+Explore the comprehensive documentation for each domain:
+
+- 🏗️ **[Architecture](./docs/ARCHITECTURE.md)**: Deep dive into service interactions.
+- 🛡️ **[Security](./docs/SECURITY.md)**: RBAC, IDOR remediation, and hardening.
+- 📡 **[API Reference](./docs/API.md)**: Full endpoint documentation.
+- 🧪 **[Development](./docs/DEVELOPMENT.md)**: Testing and contribution guidelines.
+
+---
+
+## 📜 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+Built with ❤️ by the Sentient Team.

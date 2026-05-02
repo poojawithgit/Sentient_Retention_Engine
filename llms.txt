@@ -1,0 +1,25 @@
+# Sentient Retention Engine
+> Intelligent SaaS Churn Prediction and Agentic Retention System.
+
+## Core Services
+- [apps/backend/]: Node.js Express API Gateway with RBAC and JWT Auth.
+- [apps/frontend/]: React 18 Dashboard with real-time KPI visualization.
+- [apps/ml-service/]: Python FastAPI service for churn probability inference.
+- [apps/agentic-ai/]: LangGraph-based decision engine with Digital Twin simulation.
+
+## Key Concepts
+- **Agentic Loop**: Autonomous process of Observe -> Think -> Simulate -> Decide -> Act.
+- **Digital Twin**: High-fidelity simulation to estimate strategy outcomes before execution.
+- **Specialist Escalation**: Human-in-the-loop workflow for high-risk customer interventions.
+- **Security Hardening**: Zero-trust config, IDOR prevention, and Role-Based Access Control.
+
+## Key Files
+- [docker-compose.yml]: Full stack orchestration.
+- [apps/backend/src/middleware/auth.middleware.js]: Security enforcement point.
+- [apps/agentic-ai/core/workflow.py]: Main AI state machine logic.
+- [apps/ml-service/main.py]: ML inference entry point.
+
+## Documentation
+- [docs/ARCHITECTURE.md]: Detailed system design.
+- [docs/SECURITY.md]: Hardening and access control details.
+- [docs/API.md]: Endpoint definitions.

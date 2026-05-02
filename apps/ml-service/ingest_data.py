@@ -7,7 +7,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Database connection details
-DB_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/sentient_retention")
+DB_URL = os.getenv("DATABASE_URL")
+if not DB_URL:
+    raise ValueError("DATABASE_URL environment variable is not set")
+
 CSV_PATH = os.path.join(os.path.dirname(__file__), "..", "database", "Telco-Customer-Churn.csv")
 
 def ingest_data():

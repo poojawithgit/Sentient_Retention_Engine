@@ -70,14 +70,18 @@ class RetentionController {
   }
 
   async claimEscalation(req, res) {
-    const result = await this.retentionService.claimEscalation(req.body);
-    this.broadcast({ type: 'ESCALATION_CLAIMED', payload: { ...req.body, ...result } });
+    const specialistId = req.user.username;
+    const result = await this.retentionService.claimEscalation({
+      ...req.body,
+      specialist_id: specialistId
+    });
+    this.broadcast({ type: 'ESCALATION_CLAIMED', payload: { ...req.body, specialist_id: specialistId, ...result } });
     res.json(result);
   }
 
   async getClaimedEscalations(req, res) {
-    const { specialist_id } = req.query;
-    const result = await this.retentionService.getClaimedEscalations(specialist_id);
+    const specialistId = req.user.username;
+    const result = await this.retentionService.getClaimedEscalations(specialistId);
     res.json(result);
   }
 
@@ -92,13 +96,13 @@ class RetentionController {
   }
 
   async updateSettings(req, res) {
-    const adminId = req.user.username || 'admin';
+    const adminId = req.user.username;
     const result = await this.retentionService.updateAdminSettings(req.body, adminId);
     res.json(result);
   }
 
   async addSpecialist(req, res) {
-    const adminId = req.user.username || 'admin';
+    const adminId = req.user.username;
     const result = await this.retentionService.addSpecialist(req.body, adminId);
     res.json(result);
   }
@@ -109,7 +113,7 @@ class RetentionController {
   }
 
   async executeAction(req, res) {
-    const specialistId = req.user?.username || 'specialist_001';
+    const specialistId = req.user.username;
     const result = await this.retentionService.executeAction({
       ...req.body,
       specialist_id: specialistId
@@ -122,7 +126,7 @@ class RetentionController {
   }
 
   async addCaseNote(req, res) {
-    const specialistId = req.user?.username || 'specialist_001';
+    const specialistId = req.user.username;
     const result = await this.retentionService.addCaseNote({
       ...req.body,
       specialist_id: specialistId
