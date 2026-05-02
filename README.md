@@ -108,4 +108,4 @@ Explore the comprehensive documentation for each domain:
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
-Built with ❤️ by the Sentient Team.
+Built with ❤️ by Satyam Raghuvanshi and RunTime_Terror.
