@@ -102,11 +102,11 @@ const LiveAnalyticsSection = ({ data, auditLogs = [], searchTerm = '', onSearch 
 
       {/* Middle Row: Distribution & Impact */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#0f1712]/80 backdrop-blur-md border border-[#1a281e] rounded-none p-6 shadow-xl relative overflow-hidden">
+        <div className="bg-[#0f1712]/80 backdrop-blur-md border border-[#1a281e] rounded-none p-6 shadow-xl relative overflow-hidden" role="region" aria-label="Churn Propensity Trend Chart">
           <div className="absolute bottom-0 right-0 w-8 h-[1px] bg-[#c5f82a]/20"></div>
           <div className="absolute bottom-0 right-0 w-[1px] h-8 bg-[#c5f82a]/20"></div>
           <h3 className="text-sm font-bold text-gray-200 mb-6 uppercase tracking-wider">Customer Segment Health</h3>
-          <div className="h-[250px] w-full flex">
+          <div className="h-[250px] w-full flex" role="img" aria-label="Pie chart showing customer segment distribution">
             <ResponsiveContainer width="60%" height="100%">
               <PieChart>
                 <Pie
@@ -141,9 +141,9 @@ const LiveAnalyticsSection = ({ data, auditLogs = [], searchTerm = '', onSearch 
           </div>
         </div>
 
-        <div className="bg-[#0f1712]/80 backdrop-blur-md border border-[#1a281e] rounded-none p-6 shadow-xl">
+        <div className="bg-[#0f1712]/80 backdrop-blur-md border border-[#1a281e] rounded-none p-6 shadow-xl" role="region" aria-label="Agent Performance Bar Chart">
           <h3 className="text-sm font-bold text-gray-200 mb-6 uppercase tracking-wider">Agent Retention Performance</h3>
-          <div className="h-[250px] w-full">
+          <div className="h-[250px] w-full" role="img" aria-label="Bar chart showing cases prevented vs lost by AI agents">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={retentionImpact}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1a281e" vertical={false} />

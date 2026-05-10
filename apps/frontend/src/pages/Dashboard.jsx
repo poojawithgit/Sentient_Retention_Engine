@@ -273,7 +273,7 @@ const Dashboard = ({ isAdminView = false }) => {
   ];
 
   return (
-    <div className="h-screen flex flex-col bg-[#050505] text-[#e1e8e2] font-mono selection:bg-[#c5f82a]/30 relative overflow-hidden">
+    <div className="h-screen flex flex-col bg-[#050505] text-[#e1e8e2] font-sans selection:bg-[#c5f82a]/30 relative overflow-hidden">
       {/* Cyber-SOC HUD Overlays */}
       <div className="hud-grid" />
       <div className="hud-scanline" />
@@ -300,7 +300,7 @@ const Dashboard = ({ isAdminView = false }) => {
       
       <div className={`flex w-full h-full relative z-10 transition-all duration-500 ${isFullView ? 'p-0' : 'p-4 md:p-6 lg:p-8'}`}>
         <div className="w-20 flex flex-col items-center pt-4 shrink-0 animate-in fade-in slide-in-from-left-4 duration-500 border-r border-cyber-border bg-cyber-black z-20">
-          <Link to="/" className="text-cyber-primary font-black text-2xl tracking-tighter mb-10 hover:opacity-80 transition-opacity">SRE</Link>
+          <Link to="/" className="text-cyber-primary font-black text-2xl tracking-tighter mb-10 hover:opacity-80 transition-opacity font-display">SRE</Link>
           <div className="flex flex-col gap-6 items-center">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -314,7 +314,7 @@ const Dashboard = ({ isAdminView = false }) => {
                   <div className={`w-10 h-10 flex items-center justify-center transition-all border ${isActive ? 'bg-cyber-primary text-cyber-black border-cyber-primary shadow-[0_0_15px_rgba(197,248,42,0.3)]' : 'bg-transparent border-zinc-800 group-hover:border-zinc-600'}`}>
                     <Icon size={18} />
                   </div>
-                  <span className="text-[7px] uppercase font-black tracking-[0.2em]">{item.name}</span>
+                  <span className="text-[7px] uppercase font-black tracking-[0.2em] font-display">{item.name}</span>
                 </button>
               );
             })}
@@ -330,14 +330,14 @@ const Dashboard = ({ isAdminView = false }) => {
                 <div className="w-10 h-10 border border-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-cyber-primary group-hover:border-cyber-primary/50 transition-all">
                   <User size={18} />
                 </div>
-                <span className="text-[7px] uppercase font-black text-zinc-700 truncate max-w-[60px]">{displayName}</span>
+                <span className="text-[7px] uppercase font-black text-zinc-700 truncate max-w-[60px] font-display">{displayName}</span>
               </button>
             ) : (
               <div className="flex flex-col items-center gap-1 group">
                 <div className="w-10 h-10 border border-zinc-800 flex items-center justify-center text-zinc-500 group-hover:text-cyber-primary transition-all">
                   <User size={18} />
                 </div>
-                <span className="text-[7px] uppercase font-black text-zinc-700 truncate max-w-[60px]">{displayName}</span>
+                <span className="text-[7px] uppercase font-black text-zinc-700 truncate max-w-[60px] font-display">{displayName}</span>
               </div>
             )}
             
@@ -376,8 +376,8 @@ const Dashboard = ({ isAdminView = false }) => {
                 <div className="w-7/12 flex flex-col h-full bg-cyber-surface border border-cyber-border p-5 relative shadow-brutalist">
                   <div className="flex justify-between items-start mb-6 shrink-0">
                     <div>
-                      <h2 className="text-xl font-black text-white uppercase tracking-tighter font-mono">Agent Activity Stream</h2>
-                      <div className="flex items-center gap-2 text-cyber-primary text-[9px] uppercase font-black tracking-[0.2em] mt-2">
+                      <h2 className="text-xl font-black text-white uppercase tracking-tighter font-display">Agent Activity Stream</h2>
+                      <div className="flex items-center gap-2 text-cyber-primary text-[9px] uppercase font-black tracking-[0.2em] mt-2 font-display">
                         <Activity size={12} className="animate-pulse" /> Neural Observability Active
                       </div>
                     </div>
@@ -433,7 +433,7 @@ const Dashboard = ({ isAdminView = false }) => {
                 </div>
 
                 <div className="w-5/12 flex flex-col h-full bg-cyber-surface border border-cyber-border p-5 shadow-brutalist">
-                  <h2 className="text-xl font-black text-white uppercase tracking-tighter font-mono mb-6 shrink-0">Pipeline Live View</h2>
+                  <h2 className="text-xl font-black text-white uppercase tracking-tighter font-display mb-6 shrink-0">Pipeline Live View</h2>
                   <div className="flex-1 relative overflow-hidden bg-cyber-black border border-cyber-border shadow-inner flex items-center justify-center">
                     <div className="absolute inset-0" ref={activityContainerRef}>
                       {pipelineGraphData.nodes.length > 0 && activityDimensions.width > 0 ? (
@@ -451,7 +451,7 @@ const Dashboard = ({ isAdminView = false }) => {
                       ) : (
                         <div className="flex flex-col items-center justify-center h-full opacity-30">
                           <div className="w-12 h-12 border-2 border-dashed border-cyber-primary animate-spin-slow mb-4" />
-                          <span className="text-[10px] uppercase tracking-[0.3em] font-black text-cyber-primary">Initializing Neural Path...</span>
+                          <span className="text-[10px] uppercase tracking-[0.3em] font-black text-cyber-primary font-display">Initializing Neural Path...</span>
                         </div>
                       )}
                     </div>
@@ -465,7 +465,7 @@ const Dashboard = ({ isAdminView = false }) => {
             <div className={`flex flex-col flex-1 h-full min-h-0 relative`}>
               <div className={`flex-1 transition-all duration-700 ease-in-out relative overflow-hidden flex shadow-2xl ${isFullView ? 'bg-black h-full w-full' : 'bg-cyber-black border border-cyber-border shadow-brutalist'}`}>
                 <div className="absolute top-8 left-8 z-50 flex gap-3">
-                  <div className="px-4 py-2 bg-cyber-primary text-cyber-black font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-[0_0_20px_rgba(197,248,42,0.4)] animate-in zoom-in-50 duration-300">
+                  <div className="px-4 py-2 bg-cyber-primary text-cyber-black font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-[0_0_20px_rgba(197,248,42,0.4)] animate-in zoom-in-50 duration-300 font-display">
                     <div className="w-2 h-2 bg-cyber-black rounded-full animate-pulse"></div>
                     Live Pipeline Environment
                   </div>
@@ -501,7 +501,7 @@ const Dashboard = ({ isAdminView = false }) => {
                   <div className="absolute top-6 right-6 w-80 bg-[#121c16]/95 backdrop-blur-2xl border border-[#233529] rounded-2xl flex flex-col text-gray-300 shadow-2xl overflow-hidden z-10 animate-in slide-in-from-right-8 duration-300 max-h-[80%]">
                     <div className="p-5 flex-1 overflow-y-auto custom-scrollbar">
                       <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-lg font-semibold text-white">Node Details</h2>
+                        <h2 className="text-lg font-bold text-white font-display uppercase tracking-tight">Node Details</h2>
                         <button onClick={() => setSelectedNode(null)} className="text-gray-500 hover:text-white transition-colors">
                           <X size={18} />
                         </button>
@@ -511,18 +511,18 @@ const Dashboard = ({ isAdminView = false }) => {
                         <span className="bg-[#c5f82a]/10 text-[#c5f82a] text-[10px] px-2 py-0.5 rounded border border-[#c5f82a]/20 font-mono uppercase tracking-wider">
                           {nodeData[selectedNode.id]?.status || 'Idle'}
                         </span>
-                        <h3 className="text-xl font-bold text-white truncate" title={selectedNode.name || selectedNode.id}>{selectedNode.name || selectedNode.id}</h3>
+                        <h3 className="text-xl font-bold text-white truncate font-display" title={selectedNode.name || selectedNode.id}>{selectedNode.name || selectedNode.id}</h3>
                       </div>
                       
-                      <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-4">
-                        Last Active: <span className="text-gray-400">{nodeData[selectedNode.id]?.timestamp || 'Never'}</span>
+                      <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-4 font-display">
+                        Last Active: <span className="text-gray-400 font-mono tracking-tighter">{nodeData[selectedNode.id]?.timestamp || 'Never'}</span>
                       </div>
 
                       {nodeData[selectedNode.id] ? (
                         <div className="space-y-6">
                           {nodeData[selectedNode.id].reasoning && (
                             <div>
-                              <div className="text-[10px] text-[#c5f82a] uppercase tracking-widest font-bold mb-2">Agent Reasoning</div>
+                              <div className="text-[10px] text-[#c5f82a] uppercase tracking-widest font-bold mb-2 font-display">Agent Reasoning</div>
                               <div className="bg-[#050806] border border-[#1a281e] rounded-xl p-3 text-xs leading-relaxed text-gray-300 italic">
                                 "{nodeData[selectedNode.id].reasoning}"
                               </div>
@@ -532,13 +532,13 @@ const Dashboard = ({ isAdminView = false }) => {
                           <div className="grid grid-cols-2 gap-3">
                             {nodeData[selectedNode.id].risk_score !== undefined && (
                               <div className="bg-[#17241c] border border-[#233529] p-3 rounded-xl">
-                                <div className="text-[9px] text-gray-500 uppercase font-bold mb-1">Risk Score</div>
-                                <div className="text-[#c5f82a] font-bold">{(nodeData[selectedNode.id].risk_score * 100).toFixed(1)}%</div>
+                                <div className="text-[9px] text-gray-500 uppercase font-bold mb-1 font-display">Risk Score</div>
+                                <div className="text-[#c5f82a] font-bold font-mono">{(nodeData[selectedNode.id].risk_score * 100).toFixed(1)}%</div>
                               </div>
                             )}
-                            {nodeData[selectedNode.id].driver && (
+                             {nodeData[selectedNode.id].driver && (
                               <div className="bg-[#17241c] border border-[#233529] p-3 rounded-xl">
-                                <div className="text-[9px] text-gray-500 uppercase font-bold mb-1">Risk Driver</div>
+                                <div className="text-[9px] text-gray-500 uppercase font-bold mb-1 font-display">Risk Driver</div>
                                 <div className="text-white font-bold">{nodeData[selectedNode.id].driver}</div>
                               </div>
                             )}
@@ -546,8 +546,8 @@ const Dashboard = ({ isAdminView = false }) => {
 
                           {nodeData[selectedNode.id].offer && (
                             <div>
-                              <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2">Generated Offer</div>
-                              <div className="bg-[#c5f82a]/5 border border-[#c5f82a]/20 rounded-xl p-3 text-xs text-[#c5f82a] font-semibold">
+                              <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2 font-display">Generated Offer</div>
+                              <div className="bg-[#c5f82a]/5 border border-[#c5f82a]/20 rounded-xl p-3 text-xs text-[#c5f82a] font-semibold font-display italic">
                                 {nodeData[selectedNode.id].offer}
                               </div>
                             </div>
@@ -555,8 +555,8 @@ const Dashboard = ({ isAdminView = false }) => {
 
                           {nodeData[selectedNode.id].action && (
                             <div>
-                              <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2">Final Action</div>
-                              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 text-xs text-blue-400 font-bold">
+                              <div className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2 font-display">Final Action</div>
+                              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 text-xs text-blue-400 font-bold font-display uppercase tracking-wider">
                                 {nodeData[selectedNode.id].action}
                               </div>
                             </div>
@@ -570,7 +570,7 @@ const Dashboard = ({ isAdminView = false }) => {
                       )}
 
                       <div className="mt-8 pt-6 border-t border-[#1a281e]">
-                        <div className="text-[10px] text-gray-600 uppercase tracking-widest font-bold mb-4">Node Metadata</div>
+                        <div className="text-[10px] text-gray-600 uppercase tracking-widest font-bold mb-4 font-display">Node Metadata</div>
                         <div className="space-y-3">
                           <div className="flex justify-between text-[11px]">
                             <span className="text-gray-500">Node ID</span>
@@ -610,7 +610,7 @@ const Dashboard = ({ isAdminView = false }) => {
                       {isCommandMenuOpen && (
                         <div className="absolute top-full left-0 mt-2 w-56 bg-[#0a120d] border border-[#233529] rounded-xl shadow-2xl z-50 overflow-hidden backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200">
                           <div className="p-2 border-b border-[#233529]/50 bg-[#121c16]/50">
-                            <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold px-3 py-1">Command Menu</span>
+                            <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold px-3 py-1 font-display">Command Menu</span>
                           </div>
                             <div className="py-1">
                               <button onClick={() => { exportToCSV(analyticsData.churnTrend, 'churn_propensity_report'); setIsCommandMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-2 text-xs text-gray-300 hover:bg-[#c5f82a]/10 hover:text-[#c5f82a] transition-colors">
@@ -631,7 +631,7 @@ const Dashboard = ({ isAdminView = false }) => {
                       )}
                     </div>
                     
-                    <div className="text-gray-200 font-bold tracking-widest flex items-center gap-3 text-sm">
+                    <div className="text-gray-200 font-bold tracking-widest flex items-center gap-3 text-sm font-display">
                       <div className="w-2 h-2 bg-[#c5f82a] rounded-full shadow-[0_0_8px_#c5f82a]"></div>
                       SRE <span className="text-gray-600 font-normal mx-1">/</span> LIVE ANALYTICS
                     </div>
@@ -648,10 +648,10 @@ const Dashboard = ({ isAdminView = false }) => {
                       {isNetworkStatusOpen && (
                         <div className="absolute top-full right-0 mt-3 w-64 bg-[#0a120d] border border-[#233529] rounded-xl shadow-2xl z-50 p-4 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200">
                           <div className="flex justify-between items-center mb-3">
-                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Network Status</span>
+                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest font-display">Network Status</span>
                             <div className="flex items-center gap-1.5">
                               <div className="w-1.5 h-1.5 bg-[#c5f82a] rounded-full animate-pulse"></div>
-                              <span className="text-[10px] text-[#c5f82a] font-bold">OPTIMAL</span>
+                              <span className="text-[10px] text-[#c5f82a] font-bold font-display">OPTIMAL</span>
                             </div>
                           </div>
                           <div className="space-y-3">
@@ -685,8 +685,8 @@ const Dashboard = ({ isAdminView = false }) => {
                       {isUserMenuOpen && (
                         <div className="absolute top-full right-0 mt-3 w-56 bg-[#0a120d] border border-[#233529] rounded-xl shadow-2xl z-50 overflow-hidden backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200">
                           <div className="p-4 border-b border-[#233529]/50 bg-[#121c16]/50">
-                            <div className="text-xs font-bold text-gray-200">{displayName}</div>
-                            <div className="text-[10px] text-gray-500">{isAdminView ? 'System Administrator' : 'Retention Specialist'}</div>
+                            <div className="text-xs font-bold text-gray-200 font-display">{displayName}</div>
+                            <div className="text-[10px] text-gray-500 font-display uppercase tracking-wider">{isAdminView ? 'System Administrator' : 'Retention Specialist'}</div>
                           </div>
                           <div className="py-1">
                             <button onClick={() => { triggerAction('Loading Profile...'); setIsUserMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-2 text-xs text-gray-300 hover:bg-[#c5f82a]/10 hover:text-[#c5f82a] transition-colors">
@@ -724,25 +724,25 @@ const Dashboard = ({ isAdminView = false }) => {
               <div className="flex flex-col mb-6 shrink-0 gap-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">
-                    <div className="text-gray-200 font-bold tracking-widest flex items-center text-sm">SENTIENT RETENTION ENGINE <span className="text-gray-600 font-normal mx-3">|</span> <span className="text-gray-400 font-normal">Human Handoff Queue</span></div>
-                    <div className="bg-[#c5f82a] text-[#0a110b] px-3 py-1 rounded-full font-bold text-[10px] tracking-wider shadow-[0_0_10px_rgba(197,248,42,0.2)]">{escalations.length} Active</div>
+                    <div className="text-gray-200 font-bold tracking-widest flex items-center text-sm font-display">SENTIENT RETENTION ENGINE <span className="text-gray-600 font-normal mx-3">|</span> <span className="text-gray-400 font-normal">Human Handoff Queue</span></div>
+                    <div className="bg-[#c5f82a] text-[#0a110b] px-3 py-1 rounded-full font-bold text-[10px] tracking-wider shadow-[0_0_10px_rgba(197,248,42,0.2)] font-display">{escalations.length} Active</div>
                   </div>
                   <div className="flex items-center gap-5">
                     <div className="flex items-center gap-6 px-6 py-2 bg-[#121c16] border border-[#1a281e] rounded-2xl mr-4">
                       <div className="flex flex-col">
-                        <span className="text-[8px] text-gray-500 uppercase font-bold tracking-widest">Avg Response</span>
+                        <span className="text-[8px] text-gray-500 uppercase font-bold tracking-widest font-display">Avg Response</span>
                         <span className="text-xs font-mono text-[#c5f82a]">{escalations.length > 3 ? '1.8m' : '0.9m'}</span>
                       </div>
                       <div className="w-px h-6 bg-[#1a281e]"></div>
                       <div className="flex flex-col">
-                        <span className="text-[8px] text-gray-500 uppercase font-bold tracking-widest">SLA Health</span>
+                        <span className="text-[8px] text-gray-500 uppercase font-bold tracking-widest font-display">SLA Health</span>
                         <span className={`text-xs font-mono ${escalations.length > 5 ? 'text-orange-400' : 'text-green-400'}`}>
                           {Math.max(92, 100 - (escalations.length * 1.2)).toFixed(1)}%
                         </span>
                       </div>
                       <div className="w-px h-6 bg-[#1a281e]"></div>
                       <div className="flex flex-col">
-                        <span className="text-[8px] text-gray-500 uppercase font-bold tracking-widest">Peak Load</span>
+                        <span className="text-[8px] text-gray-500 uppercase font-bold tracking-widest font-display">Peak Load</span>
                         <span className={`text-xs font-mono ${escalations.length > 4 ? 'text-red-400' : 'text-orange-400'}`}>
                           {escalations.length > 6 ? 'CRITICAL' : escalations.length > 3 ? 'MODERATE' : 'OPTIMAL'}
                         </span>

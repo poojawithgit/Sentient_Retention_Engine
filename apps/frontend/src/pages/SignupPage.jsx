@@ -76,9 +76,10 @@ const SignupPage = () => {
 
           <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[9px] text-gray-500 uppercase tracking-widest font-bold px-1">Company Name</label>
+              <label htmlFor="company-name" className="text-[9px] text-gray-500 uppercase tracking-widest font-bold px-1">Company Name</label>
               <div className="relative group">
                 <input
+                  id="company-name"
                   type="text"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
@@ -91,9 +92,10 @@ const SignupPage = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[9px] text-gray-500 uppercase tracking-widest font-bold px-1">Specialist ID</label>
+              <label htmlFor="specialist-id" className="text-[9px] text-gray-500 uppercase tracking-widest font-bold px-1">Specialist ID</label>
               <div className="relative group">
                 <input
+                  id="specialist-id"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -106,9 +108,10 @@ const SignupPage = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[9px] text-gray-500 uppercase tracking-widest font-bold px-1">Access Phrase</label>
+              <label htmlFor="access-phrase" className="text-[9px] text-gray-500 uppercase tracking-widest font-bold px-1">Access Phrase</label>
               <div className="relative group">
                 <input
+                  id="access-phrase"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

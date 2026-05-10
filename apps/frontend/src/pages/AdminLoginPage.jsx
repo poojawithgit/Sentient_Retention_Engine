@@ -116,11 +116,12 @@ const AdminLoginPage = () => {
           <form onSubmit={handleLogin} className="space-y-8">
             <div className="space-y-3">
               <div className="flex items-center justify-between px-1">
-                <label className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Admin Identifier</label>
+                <label htmlFor="admin-identifier" className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Admin Identifier</label>
                 <Terminal size={12} className="text-gray-700" />
               </div>
               <div className="relative group">
                 <input
+                  id="admin-identifier"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -134,11 +135,12 @@ const AdminLoginPage = () => {
 
             <div className="space-y-3">
                 <div className="flex items-center justify-between px-1">
-                    <label className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Security Phrase</label>
+                    <label htmlFor="security-phrase" className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Security Phrase</label>
                     <Lock size={12} className="text-gray-700" />
                 </div>
               <div className="relative group">
                 <input
+                  id="security-phrase"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

@@ -94,11 +94,12 @@ const LoginPage = () => {
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
               <div className="flex items-center justify-between px-1">
-                <label className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Specialist ID</label>
+                <label htmlFor="specialist-id" className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Specialist ID</label>
                 <Terminal size={10} className="text-gray-700" />
               </div>
               <div className="relative group">
                 <input
+                  id="specialist-id"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -112,11 +113,12 @@ const LoginPage = () => {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between px-1">
-                <label className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Access Phrase</label>
+                <label htmlFor="access-phrase" className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Access Phrase</label>
                 <Lock size={10} className="text-gray-700" />
               </div>
               <div className="relative group">
                 <input
+                  id="access-phrase"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

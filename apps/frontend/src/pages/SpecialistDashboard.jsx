@@ -12,9 +12,13 @@ const TimelineEvent = ({ icon: Icon, color, title, time, detail }) => (
       <div className="w-px flex-1 bg-[#1a281e] mt-2" />
     </div>
     <div className="pb-6 flex-1">
-      <div className="text-xs font-semibold text-gray-200">{title}</div>
-      <div className="text-[10px] text-gray-500 mt-0.5">{time}</div>
-      {detail && <div className="text-[11px] text-gray-400 mt-2 bg-[#0a1a0f]/50 border border-[#1a281e] rounded-lg p-3 font-mono leading-relaxed">{detail}</div>}
+      <div className="text-xs font-bold text-gray-200 font-sans tracking-wide">{title}</div>
+      <div className="text-[10px] text-gray-500 mt-1 font-mono uppercase">{time}</div>
+      {detail && (
+        <div className="text-[11px] text-gray-400 mt-2 bg-[#0a1a0f]/50 border border-[#1a281e] rounded-lg p-3 font-mono leading-relaxed tracking-tight">
+          {detail}
+        </div>
+      )}
     </div>
   </div>
 );
@@ -39,8 +43,8 @@ const ActionButton = ({ icon: Icon, label, sublabel, color, onClick, disabled })
       color === 'orange'? 'text-orange-400' : 'text-red-400'
     } />
     <div className="text-center" aria-hidden="true">
-      <div className="text-xs font-bold text-gray-200">{label}</div>
-      {sublabel && <div className="text-[9px] text-gray-500 mt-0.5 uppercase tracking-wider">{sublabel}</div>}
+      <div className="text-xs font-bold text-gray-200 font-sans tracking-tight">{label}</div>
+      {sublabel && <div className="text-[10px] text-gray-500 mt-1 font-mono uppercase tracking-widest">{sublabel}</div>}
     </div>
   </button>
 );
@@ -48,9 +52,9 @@ const ActionButton = ({ icon: Icon, label, sublabel, color, onClick, disabled })
 // ─── Risk Bar ─────────────────────────────────────────────────────────────────
 const RiskBar = ({ label, value, pct }) => (
   <div>
-    <div className="flex justify-between text-[10px] mb-1.5">
-      <span className="text-gray-400 uppercase tracking-wider">{label}</span>
-      <span className="text-[#c5f82a] font-mono font-bold">{value}</span>
+    <div className="flex justify-between text-[11px] mb-2 font-sans">
+      <span className="text-gray-500 uppercase tracking-widest font-bold">{label}</span>
+      <span className="text-[#c5f82a] font-mono font-bold tracking-tighter">{value}</span>
     </div>
     <div className="h-1.5 w-full bg-[#1a281e] rounded-full overflow-hidden">
       <div className="h-full bg-gradient-to-r from-[#8bc34a] to-[#c5f82a] rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
@@ -172,24 +176,26 @@ const SpecialistDashboard = ({ escalation, onClose, onResolved }) => {
               <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
               Back to Queue
             </button>
-            <div className="flex items-center gap-3 mb-1">
+            <div className="flex items-center gap-3 mb-2">
               <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_#ef4444]" />
-              <span className="text-[10px] text-red-400 font-bold uppercase tracking-widest">Active Case</span>
+              <span className="text-[11px] text-red-400 font-bold uppercase tracking-[0.2em] font-sans">Active Case</span>
             </div>
-            <h1 className="text-xl font-bold text-white font-mono">{escalationId}</h1>
-            <div className="text-[11px] text-gray-500 mt-1">Customer: <span className="text-gray-300 font-mono">{customerId}</span></div>
+            <h1 className="text-2xl font-bold text-white font-display tracking-tight">{escalationId}</h1>
+            <div className="text-xs text-gray-500 mt-2 font-sans">
+              Customer: <span className="text-gray-300 font-mono tracking-wider">{customerId}</span>
+            </div>
           </div>
 
           {/* Customer Profile */}
           <div className="p-6 border-b border-[#1a281e]">
-            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-4">Customer Profile</div>
-            <div className="flex items-center gap-3 mb-5">
+            <div className="text-[11px] text-gray-500 font-bold uppercase tracking-[0.2em] mb-5 font-sans">Customer Profile</div>
+            <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1a4a25] to-[#0d2615] border border-[#2a4230] flex items-center justify-center">
                 <User size={20} className="text-[#c5f82a]" />
               </div>
               <div>
-                <div className="text-sm font-bold text-gray-200 capitalize">{customerId.replace('_', ' ')}</div>
-                <div className="text-[10px] text-gray-500">Enterprise Plan · 24mo tenure</div>
+                <div className="text-sm font-bold text-gray-200 capitalize font-sans tracking-tight">{customerId.replace('_', ' ')}</div>
+                <div className="text-[11px] text-gray-500 mt-0.5 font-sans">Enterprise Plan · 24mo tenure</div>
               </div>
             </div>
             <div className="space-y-2">
@@ -216,8 +222,8 @@ const SpecialistDashboard = ({ escalation, onClose, onResolved }) => {
             </div>
 
             <div className="mt-6 p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
-              <div className="text-[10px] text-red-400 font-bold uppercase tracking-widest mb-2">AI Failure Reason</div>
-              <div className="text-[11px] text-gray-300 leading-relaxed font-mono">
+              <div className="text-[11px] text-red-400 font-bold uppercase tracking-widest mb-2 font-sans">AI Failure Reason</div>
+              <div className="text-[12px] text-gray-300 leading-relaxed font-mono tracking-tight">
                 {escalation.reason || 'Business rule confidence threshold not met. Digital twin rejected all automated offers.'}
               </div>
             </div>
@@ -238,16 +244,16 @@ const SpecialistDashboard = ({ escalation, onClose, onResolved }) => {
           {/* Top Bar */}
           <div className="flex items-center justify-between p-6 border-b border-[#1a281e] shrink-0">
             <div>
-              <div className="text-[10px] text-[#c5f82a] font-bold uppercase tracking-widest mb-1">Specialist Command Center</div>
-              <h2 className="text-2xl font-bold text-white">Retention Intervention</h2>
+              <div className="text-[11px] text-[#c5f82a] font-bold uppercase tracking-[0.2em] mb-1 font-sans">Specialist Command Center</div>
+              <h2 className="text-3xl font-bold text-white font-display tracking-tight">Retention Intervention</h2>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-[10px] text-gray-500 bg-[#0f1712] border border-[#1a281e] px-3 py-2 rounded-xl">
+              <div className="flex items-center gap-2 text-[11px] text-gray-500 bg-[#0f1712] border border-[#1a281e] px-4 py-2 rounded-xl font-mono">
                 <Clock size={12} className="text-[#c5f82a]" />
                 Claimed {claimedAt.toLocaleTimeString()}
               </div>
               {actionTaken && (
-                <div className="flex items-center gap-2 text-[10px] font-bold text-[#c5f82a] bg-[#c5f82a]/10 border border-[#c5f82a]/20 px-3 py-2 rounded-xl">
+                <div className="flex items-center gap-2 text-[11px] font-bold text-[#c5f82a] bg-[#c5f82a]/10 border border-[#c5f82a]/20 px-4 py-2 rounded-xl font-mono">
                   <CheckCircle size={12} />
                   {actionTaken} SENT
                 </div>
@@ -382,15 +388,15 @@ const SpecialistDashboard = ({ escalation, onClose, onResolved }) => {
 
           {/* SLA Timer */}
           <div className="p-6 border-t border-[#1a281e]">
-            <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3">SLA Status</div>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 rounded-full bg-orange-400 animate-pulse" />
-              <span className="text-orange-400 text-xs font-bold">14:32 remaining</span>
+            <div className="text-[11px] text-gray-500 font-bold uppercase tracking-widest mb-4 font-sans">SLA Status</div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-2.5 h-2.5 rounded-full bg-orange-400 animate-pulse shadow-[0_0_8px_rgba(251,146,60,0.4)]" />
+              <span className="text-orange-400 text-[13px] font-bold font-mono tracking-tighter">14:32 remaining</span>
             </div>
-            <div className="h-1.5 w-full bg-[#1a281e] rounded-full overflow-hidden">
-              <div className="h-full bg-orange-400 rounded-full" style={{ width: '38%' }} />
+            <div className="h-2 w-full bg-[#1a281e] rounded-full overflow-hidden">
+              <div className="h-full bg-orange-400 rounded-full shadow-[0_0_10px_rgba(251,146,60,0.2)] transition-all duration-1000" style={{ width: '38%' }} />
             </div>
-            <div className="text-[9px] text-gray-600 mt-2">P1 · 15min SLA · Starts at claim</div>
+            <div className="text-[10px] text-gray-600 mt-3 font-mono uppercase tracking-widest">P1 · 15min SLA · Starts at claim</div>
           </div>
         </div>
       </div>

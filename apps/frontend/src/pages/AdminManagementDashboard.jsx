@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { 
   Users, AlertCircle, Shield, ChevronRight, Search, Filter, 
   RefreshCcw, CheckCircle, Clock, MoreVertical, LayoutGrid, 
@@ -187,6 +188,13 @@ const AdminManagementDashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#060c08] text-gray-200 font-sans flex overflow-hidden">
+      <Helmet>
+        <title>Admin Dashboard | Sentient Retention Engine</title>
+        <meta name="description" content="Enterprise AI observability and orchestration for proactive customer retention. Monitor agentic workflows and manage high-risk customer escalations." />
+        <meta property="og:title" content="Sentient Retention Engine - Admin Dashboard" />
+        <meta property="og:description" content="Real-time AI orchestration and risk management dashboard." />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       {/* ── Sidebar ── */}
       <aside className="fixed left-0 top-0 w-64 h-screen border-r border-[#1a281e] bg-[#09110b] flex flex-col z-50 overflow-hidden">
         <div className="flex flex-col h-full overflow-y-auto no-scrollbar">
@@ -197,8 +205,8 @@ const AdminManagementDashboard = () => {
                 <Shield size={20} className="text-[#0a110b]" />
               </div>
               <div>
-                <div className="text-xs font-bold text-[#c5f82a] uppercase tracking-widest">Sentient</div>
-                <div className="text-lg font-bold text-white tracking-tight">Admin Ops</div>
+                <div className="text-[10px] font-bold text-[#c5f82a] uppercase tracking-[0.2em] font-display">Sentient</div>
+                <div className="text-lg font-bold text-white tracking-tight font-display">Admin Ops</div>
               </div>
             </div>
           </div>
@@ -244,7 +252,7 @@ const AdminManagementDashboard = () => {
             </nav>
 
             <div className="mt-10">
-              <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-6 px-4">Operations KPIs</div>
+              <div className="text-[10px] text-white/30 font-bold uppercase tracking-[0.2em] mb-6 px-4 font-display">Operations KPIs</div>
               <div className="space-y-6 px-4">
                 <KpiMini label="Pending Cases" value={pendingEscalations.length} color="text-red-400" />
                 <KpiMini label="Avg Resolution" value="14m" />
@@ -310,13 +318,13 @@ const AdminManagementDashboard = () => {
         {/* Header */}
         <header className="h-24 border-b border-[#1a281e] flex items-center justify-between px-10 shrink-0 bg-[#060c08]/50 backdrop-blur-xl z-10">
           <div>
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-white font-display tracking-tight">
               {activeSubTab === 'ops' ? 'Escalation Management' : 
                activeSubTab === 'team' ? 'Team Control' :
                activeSubTab === 'health' ? 'System Telemetry' : 
                activeSubTab === 'settings' ? 'Global Settings' : 'Security Audit'}
             </h1>
-            <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">
+            <p className="text-[10px] text-white/40 mt-1 uppercase tracking-[0.15em] font-display font-medium">
               {activeSubTab === 'ops' ? 'Manual Intervention Pipeline' : 
                activeSubTab === 'team' ? 'Specialist Roster & Performance' :
                activeSubTab === 'health' ? 'Real-time Infrastructure Monitoring' : 
@@ -419,8 +427,8 @@ const AdminManagementDashboard = () => {
                 <div>
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                      <h2 className="text-lg font-bold text-white">Pending Queue</h2>
-                      <span className="bg-red-500/10 text-red-400 text-[10px] font-bold px-2 py-0.5 rounded border border-red-500/20 uppercase tracking-widest">Immediate Attention</span>
+                      <h2 className="text-lg font-bold text-white font-display tracking-tight">Pending Queue</h2>
+                      <span className="bg-red-500/10 text-red-400 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-red-500/20 uppercase tracking-[0.1em] font-display">Immediate Attention</span>
                     </div>
                     <div className="flex items-center gap-4">
                       <select 
@@ -467,7 +475,7 @@ const AdminManagementDashboard = () => {
                 {/* Claimed History / My Tasks */}
                 {claimedEscalations.length > 0 && (
                   <div>
-                    <h2 className="text-lg font-bold text-white mb-6">My Active Cases</h2>
+                    <h2 className="text-lg font-bold text-white mb-6 font-display tracking-tight">My Active Cases</h2>
                     <div className="grid grid-cols-2 gap-6">
                       {claimedEscalations.map((esc, i) => (
                         <div 
@@ -481,13 +489,13 @@ const AdminManagementDashboard = () => {
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 bg-[#c5f82a]/10 border border-[#c5f82a]/20 rounded-xl flex items-center justify-center text-[#c5f82a]">
                                 <UserCheck size={20} />
-                              </div>
+                                </div>
                               <div>
-                                <div className="text-sm font-bold text-white">{esc.user_id}</div>
-                                <div className="text-[10px] text-gray-500 uppercase font-mono">{esc.id}</div>
+                                <div className="text-sm font-bold text-white font-display">{esc.user_id}</div>
+                                <div className="text-[10px] text-white/30 uppercase font-mono tracking-tighter">{esc.id}</div>
                               </div>
                             </div>
-                            <span className="text-[9px] font-bold text-[#c5f82a] bg-[#c5f82a]/10 border border-[#c5f82a]/20 px-2 py-1 rounded uppercase tracking-widest">In Progress</span>
+                            <span className="text-[9px] font-bold text-[#c5f82a] bg-[#c5f82a]/10 border border-[#c5f82a]/20 px-2 py-1 rounded-lg uppercase tracking-[0.1em] font-display">In Progress</span>
                           </div>
                           
                           <div className="text-[11px] text-gray-400 line-clamp-2 mb-6 h-8 italic font-mono">
@@ -496,10 +504,10 @@ const AdminManagementDashboard = () => {
                           
                           <div className="flex items-center justify-between pt-6 border-t border-[#1a281e]">
                             <div className="flex items-center gap-2">
-                              <Clock size={12} className="text-gray-600" />
-                              <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Claimed {new Date(esc.claimed_at || esc.executed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                              <Clock size={12} className="text-white/20" />
+                              <span className="text-[10px] text-white/30 font-bold uppercase tracking-[0.1em] font-display">Claimed {new Date(esc.claimed_at || esc.executed_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
-                            <button className="text-[10px] font-bold text-[#c5f82a] uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">
+                            <button className="text-[10px] font-bold text-[#c5f82a] uppercase tracking-[0.1em] font-display flex items-center gap-1 group-hover:gap-2 transition-all">
                               Resume Workspace
                               <ArrowRight size={12} />
                             </button>
@@ -789,19 +797,20 @@ const NavItem = ({ icon: Icon, label, active, onClick }) => (
   <button 
     onClick={onClick}
     aria-current={active ? 'page' : undefined}
+    aria-label={`Navigate to ${label}`}
     className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${
       active ? 'bg-[#c5f82a]/10 text-[#c5f82a]' : 'text-gray-500 hover:text-gray-300 hover:bg-white/5'
     }`}
   >
     <Icon size={18} />
-    <span className="text-[11px] font-bold uppercase tracking-widest">{label}</span>
+    <span className="text-xs font-bold uppercase tracking-[0.15em] font-display">{label}</span>
   </button>
 );
 
-const KpiMini = ({ label, value, color = "text-gray-300" }) => (
-  <div>
-    <div className="text-[9px] text-gray-600 font-bold uppercase tracking-widest mb-1">{label}</div>
-    <div className={`text-lg font-bold font-mono ${color}`}>{value}</div>
+const KpiMini = ({ label, value, color = "text-white" }) => (
+  <div className="flex flex-col">
+    <div className="text-[11px] text-white/50 font-bold uppercase tracking-[0.2em] mb-1.5 font-display">{label}</div>
+    <div className={`text-xl font-bold font-mono tracking-tight ${color}`}>{value}</div>
   </div>
 );
 
@@ -810,19 +819,21 @@ const StatCard = ({ label, value, trend, trendColor, icon: Icon, color }) => {
     red: 'border-red-500/20 bg-red-500/5 text-red-400',
     green: 'border-[#c5f82a]/20 bg-[#c5f82a]/5 text-[#c5f82a]',
     blue: 'border-blue-500/20 bg-blue-500/5 text-blue-400',
-    purple: 'border-purple-500/20 bg-purple-500/5 text-purple-400'
+    cyan: 'border-cyan-500/20 bg-cyan-500/5 text-cyan-400',
+    teal: 'border-teal-500/20 bg-teal-500/5 text-teal-400'
   };
 
   return (
-    <div className="bg-[#0a110b] border border-[#1a281e] p-6 rounded-3xl">
+    <div className="bg-[#0a110b] border border-[#1a281e] p-6 rounded-3xl relative overflow-hidden group hover:border-[#c5f82a]/20 transition-colors">
+      <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none group-hover:bg-[#c5f82a]/5 transition-colors" />
       <div className="flex items-center justify-between mb-4">
-        <div className={`p-2 rounded-lg border ${colorMap[color]}`}>
+        <div className={`p-2.5 rounded-xl border ${colorMap[color]}`}>
           <Icon size={18} />
         </div>
-        <div className={`text-[10px] font-bold ${trendColor} uppercase tracking-widest`}>{trend}</div>
+        <div className={`text-[10px] font-bold ${trendColor} uppercase tracking-[0.1em] font-display`}>{trend}</div>
       </div>
-      <div className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-1">{label}</div>
-      <div className="text-2xl font-bold text-white font-mono">{value}</div>
+      <div className="text-[10px] text-white/30 font-bold uppercase tracking-[0.15em] mb-1 font-display">{label}</div>
+      <div className="text-2xl font-bold text-white font-mono tracking-tight">{value}</div>
     </div>
   );
 };
@@ -832,34 +843,35 @@ const EscalationItem = ({ esc, mode, onClaim }) => {
 
   if (mode === 'grid') {
     return (
-      <div className="bg-[#0a110b] border border-[#1a281e] p-6 rounded-3xl hover:border-[#c5f82a]/30 transition-all flex flex-col h-full">
-        <div className="flex justify-between items-start mb-6">
+      <div className="bg-[#0a110b] border border-[#1a281e] p-6 rounded-3xl hover:border-[#c5f82a]/30 transition-all flex flex-col h-full group relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-24 h-24 bg-[#c5f82a]/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2 pointer-events-none group-hover:bg-[#c5f82a]/10 transition-colors" />
+        <div className="flex justify-between items-start mb-6 relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#1a281e] rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#1a281e] rounded-xl flex items-center justify-center border border-white/5 shadow-inner">
               <Activity size={20} className={isHighRisk ? 'text-red-400' : 'text-orange-400'} />
             </div>
             <div>
-              <div className="text-sm font-bold text-white">{esc.user_id}</div>
-              <div className="text-[9px] text-gray-600 font-mono">ID: {esc.id?.slice(-8).toUpperCase() || 'UNSYNCED'}</div>
+              <div className="text-base font-bold text-white font-display tracking-tight leading-none mb-1">{esc.user_id}</div>
+              <div className="text-[10px] text-white/40 font-mono tracking-wider font-medium uppercase">Reference: {esc.id?.slice(-8) || 'UNSYNCED'}</div>
             </div>
           </div>
-          <div className={`text-[9px] font-bold px-2 py-1 rounded border uppercase tracking-widest ${
-            isHighRisk ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-orange-500/10 text-orange-400 border-orange-500/20'
+          <div className={`text-xs font-bold px-2.5 py-1 rounded-lg border uppercase tracking-[0.1em] font-display ${
+            isHighRisk ? 'bg-red-500/10 text-red-400 border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]' : 'bg-orange-500/10 text-orange-400 border-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.1)]'
           }`}>
             {(esc.churn_risk * 100).toFixed(0)}% Risk
           </div>
         </div>
 
-        <div className="flex-1">
-          <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">Escalation Signal</div>
-          <div className="text-[11px] text-gray-300 bg-[#060c08] border border-[#1a281e] p-3 rounded-xl font-mono leading-relaxed h-16 overflow-hidden">
-            {esc.reason || 'Unspecified business rule violation requiring manual audit.'}
+        <div className="flex-1 relative z-10">
+          <div className="text-[11px] text-white/50 font-bold uppercase tracking-[0.2em] mb-3 font-display">Escalation Logic</div>
+          <div className="text-xs text-gray-400 bg-[#060c08]/50 border border-white/5 p-4 rounded-2xl font-mono leading-relaxed h-24 overflow-hidden italic text-pretty">
+            "{esc.reason || 'Unspecified business rule violation requiring manual audit.'}"
           </div>
         </div>
 
         <button 
           onClick={onClaim}
-          className="w-full mt-6 py-3 bg-[#1a281e] hover:bg-[#c5f82a] text-[#c5f82a] hover:text-[#0a110b] border border-[#2a4230] rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all"
+          className="w-full mt-6 py-4 bg-[#1a281e] hover:bg-[#c5f82a] text-[#c5f82a] hover:text-[#0a110b] border border-[#c5f82a]/20 rounded-2xl text-[11px] font-bold uppercase tracking-[0.25em] font-display transition-all relative z-10 hover:shadow-[0_0_20px_rgba(197,248,42,0.2)] active:scale-[0.98]"
         >
           Claim Ownership
         </button>
@@ -868,41 +880,43 @@ const EscalationItem = ({ esc, mode, onClaim }) => {
   }
 
   return (
-    <div className="bg-[#0a110b] border border-[#1a281e] p-5 rounded-2xl hover:border-[#c5f82a]/30 transition-all flex items-center gap-6">
-      <div className={`w-1 h-10 rounded-full ${isHighRisk ? 'bg-red-500' : 'bg-orange-500'}`} />
+    <div className="bg-[#0a110b] border border-[#1a281e] p-5 rounded-2xl hover:border-[#c5f82a]/30 transition-all flex items-center gap-6 group">
+      <div className={`w-1 h-10 rounded-full ${isHighRisk ? 'bg-red-500' : 'bg-orange-500'} opacity-50 group-hover:opacity-100 transition-opacity`} />
       
-      <div className="w-40">
-        <div className="text-xs font-bold text-white uppercase tracking-wider">{esc.user_id}</div>
-        <div className="text-[9px] text-gray-600 mt-0.5 font-mono">{new Date(esc.executed_at).toLocaleTimeString()}</div>
+      <div className="w-44">
+        <div className="text-xs font-bold text-white uppercase tracking-[0.1em] font-display">{esc.user_id}</div>
+        <div className="text-[10px] text-white/30 mt-0.5 font-mono tracking-tighter">{new Date(esc.executed_at).toLocaleTimeString()} • {new Date(esc.executed_at).toLocaleDateString()}</div>
       </div>
 
       <div className="flex-1">
-        <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Reason</div>
-        <div className="text-[11px] text-gray-300 truncate max-w-md font-mono italic">
+        <div className="text-[10px] text-white/20 font-bold uppercase tracking-[0.15em] mb-1 font-display">Handover Reason</div>
+        <div className="text-[11px] text-gray-400 truncate max-w-md font-mono italic">
           "{esc.reason || 'Agent handover requested'}"
         </div>
       </div>
 
-      <div className="w-24 text-center">
-        <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Risk Score</div>
-        <div className={`text-sm font-bold font-mono ${isHighRisk ? 'text-red-400' : 'text-orange-400'}`}>
+      <div className="w-32 text-center">
+        <div className="text-[10px] text-white/20 font-bold uppercase tracking-[0.15em] mb-1 font-display">Churn Risk</div>
+        <div className={`text-sm font-bold font-mono tracking-tight ${isHighRisk ? 'text-red-400' : 'text-orange-400'}`}>
           {(esc.churn_risk * 100).toFixed(1)}%
         </div>
       </div>
 
-      <button 
-        onClick={onClaim}
-        className="px-6 py-2.5 bg-[#c5f82a]/5 hover:bg-[#c5f82a] text-[#c5f82a] hover:text-[#0a110b] border border-[#c5f82a]/20 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all whitespace-nowrap"
-      >
-        Claim Case
-      </button>
+      <div className="flex items-center gap-3">
+        <button 
+          onClick={onClaim}
+          className="px-8 py-3.5 bg-[#c5f82a]/5 hover:bg-[#c5f82a] text-[#c5f82a] hover:text-[#0a110b] border border-[#c5f82a]/30 rounded-2xl text-[11px] font-bold uppercase tracking-[0.25em] font-display transition-all whitespace-nowrap hover:shadow-[0_0_20px_rgba(197,248,42,0.2)] active:scale-[0.98]"
+        >
+          Claim Case
+        </button>
 
-      <button 
-        onClick={() => triggerAction(`Additional options for ${esc.user_id}`)}
-        className="p-2 text-gray-600 hover:text-white transition-colors"
-      >
-        <MoreVertical size={16} />
-      </button>
+        <button 
+          onClick={() => triggerAction(`Additional options for ${esc.user_id}`)}
+          className="p-2.5 text-white/20 hover:text-white transition-colors border border-transparent hover:border-white/5 rounded-xl"
+        >
+          <MoreVertical size={16} />
+        </button>
+      </div>
     </div>
   );
 };

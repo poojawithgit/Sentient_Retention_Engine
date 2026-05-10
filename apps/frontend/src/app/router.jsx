@@ -1,5 +1,6 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import Dashboard from '../pages/Dashboard';
 import LandingPage from '../pages/LandingPage';
 import LoginPage from '../pages/LoginPage';
@@ -8,44 +9,60 @@ import AdminLoginPage from '../pages/AdminLoginPage';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import AdminManagementDashboard from '../pages/AdminManagementDashboard';
 
+const PageTransition = ({ children }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -10 }}
+    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+    className="h-full"
+  >
+    {children}
+  </motion.div>
+);
+
 const AppRouter = () => {
+  const location = useLocation();
+
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/admin/login" element={<AdminLoginPage />} />
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/admin/dashboard" 
-        element={
-          <ProtectedRoute>
-            <Dashboard isAdminView={true} />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/admin/management" 
-        element={
-          <ProtectedRoute>
-            <AdminManagementDashboard />
-          </ProtectedRoute>
-        } 
-      />
-      <Route path="/customers" element={<div>Customers Page (WIP)</div>} />
-      <Route path="/churn-analysis" element={<div>Churn Analysis Page (WIP)</div>} />
-      <Route path="/retention" element={<div>Retention Page (WIP)</div>} />
-      <Route path="/campaigns" element={<div>Campaigns Page (WIP)</div>} />
-      <Route path="/settings" element={<div>Settings Page (WIP)</div>} />
-      <Route path="*" element={<div>404 - Not Found</div>} />
-    </Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
+        <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
+        <Route path="/signup" element={<PageTransition><SignupPage /></PageTransition>} />
+        <Route path="/admin/login" element={<PageTransition><AdminLoginPage /></PageTransition>} />
+        <Route 
+          path="/dashboard" 
+          element={
+            <ProtectedRoute>
+              <PageTransition><Dashboard /></PageTransition>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/dashboard" 
+          element={
+            <ProtectedRoute>
+              <PageTransition><Dashboard isAdminView={true} /></PageTransition>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/management" 
+          element={
+            <ProtectedRoute>
+              <PageTransition><AdminManagementDashboard /></PageTransition>
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="/customers" element={<PageTransition><div>Customers Page (WIP)</div></PageTransition>} />
+        <Route path="/churn-analysis" element={<PageTransition><div>Churn Analysis Page (WIP)</div></PageTransition>} />
+        <Route path="/retention" element={<PageTransition><div>Retention Page (WIP)</div></PageTransition>} />
+        <Route path="/campaigns" element={<PageTransition><div>Campaigns Page (WIP)</div></PageTransition>} />
+        <Route path="/settings" element={<PageTransition><div>Settings Page (WIP)</div></PageTransition>} />
+        <Route path="*" element={<PageTransition><div>404 - Not Found</div></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
   );
 };
 

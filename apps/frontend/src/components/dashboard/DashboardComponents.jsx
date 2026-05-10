@@ -1,17 +1,22 @@
 import React, { useRef, useEffect } from 'react';
-import { X, Cpu, Shield, Activity, Layers, Link2, CheckCircle, AlertCircle, Info, Clock, ChevronDown, Zap, ShieldCheck } from 'lucide-react';
+import { X, Cpu, Shield, Activity, Layers, Link2, CheckCircle, AlertCircle, Info, Clock, ChevronDown, Zap, ShieldCheck, User } from 'lucide-react';
+
+export const Skeleton = ({ className }) => (
+  <div className={`animate-pulse bg-white/5 rounded-lg ${className}`}></div>
+);
 
 export const KPICard = ({ title, value, badge, badgeColor = "text-cyber-primary bg-cyber-primary/10 border-cyber-primary/30", sparklineData }) => (
-  <div className="bg-cyber-surface border border-cyber-border rounded-none p-5 flex flex-col relative overflow-hidden group hover:border-cyber-primary/50 transition-all border-l-2 border-l-cyber-primary shadow-brutalist">
-    <div className="flex justify-between items-start mb-4 z-10">
-      <div className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold font-mono">{title}</div>
+  <div className="premium-card p-6 flex flex-col relative overflow-hidden group">
+    <div className="accent-line"></div>
+    <div className="flex justify-between items-start mb-6 z-10">
+      <div className="text-label text-zinc-400 font-medium">{title}</div>
       {badge && (
-        <div className={`text-[9px] px-1.5 py-0.5 rounded-none border font-mono ${badgeColor}`}>
+        <div className={`text-[11px] px-2.5 py-0.5 rounded-full border font-bold tracking-widest ${badgeColor}`}>
           {badge}
         </div>
       )}
     </div>
-    <div className="text-4xl font-bold text-cyber-primary z-10 mb-4 font-mono">{value}</div>
+    <div className="text-5xl text-value text-white z-10 mb-4 font-display leading-none">{value}</div>
     {/* Sparkline */}
     <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none opacity-60">
       <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full">
@@ -29,30 +34,29 @@ export const KPICard = ({ title, value, badge, badgeColor = "text-cyber-primary 
 );
 
 export const DonutChart = () => (
-  <div className="bg-cyber-surface border border-cyber-border rounded-none p-5 flex flex-col h-full relative shadow-brutalist">
-    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-cyber-primary/30"></div>
-    <div className="text-xs font-bold text-zinc-400 mb-4 uppercase tracking-widest font-mono">Driver Distribution</div>
+  <div className="premium-card p-6 flex flex-col h-full relative">
+    <div className="text-label mb-6">Driver Distribution</div>
     <div className="flex-1 flex flex-col items-center justify-center relative">
       <svg viewBox="0 0 100 100" className="w-36 h-36">
         <circle cx="50" cy="50" r="35" fill="none" stroke="#1A1A1A" strokeWidth="12" />
         <circle cx="50" cy="50" r="35" fill="none" stroke="#c5f82a" strokeWidth="12" strokeDasharray="160 251" strokeDashoffset="-20" />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
-        <span className="text-white font-bold text-xl font-mono">48.2K</span>
-        <span className="text-zinc-600 text-[10px] uppercase font-mono">records</span>
+        <span className="text-white text-value text-3xl font-display">{48.2}K</span>
+        <span className="text-zinc-500 text-[11px] font-semibold uppercase tracking-[0.2em] mt-1">records</span>
       </div>
-      <div className="flex gap-4 mt-6 text-[9px] text-zinc-500 uppercase tracking-widest font-bold font-mono">
-        <div className="flex items-center gap-1.5"><div className="w-2 h-2 bg-cyber-primary"></div> Price</div>
-        <div className="flex items-center gap-1.5"><div className="w-2 h-2 bg-zinc-700"></div> Qual</div>
-        <div className="flex items-center gap-1.5"><div className="w-2 h-2 bg-zinc-800"></div> Cont</div>
+      <div className="flex gap-4 mt-8 text-[11px] font-semibold uppercase tracking-wider">
+        <div className="flex items-center gap-1.5 text-zinc-400"><div className="w-1.5 h-1.5 rounded-full bg-cyber-primary"></div> Price</div>
+        <div className="flex items-center gap-1.5 text-zinc-500"><div className="w-1.5 h-1.5 rounded-full bg-zinc-700"></div> Qual</div>
+        <div className="flex items-center gap-1.5 text-zinc-500"><div className="w-1.5 h-1.5 rounded-full bg-zinc-800"></div> Cont</div>
       </div>
     </div>
   </div>
 );
 
 export const BarChart = () => (
-  <div className="bg-cyber-surface border border-cyber-border rounded-none p-5 flex flex-col h-full shadow-brutalist">
-    <div className="text-xs font-bold text-zinc-400 mb-4 uppercase tracking-widest font-mono">Risk Interventions — 7 Days</div>
+  <div className="premium-card p-6 flex flex-col h-full">
+    <div className="text-label mb-6">Risk Interventions — 7 Days</div>
     <div className="flex-1 flex flex-col justify-end">
       <div className="flex items-end justify-center gap-4 h-32 mb-6">
         {[
@@ -64,9 +68,9 @@ export const BarChart = () => (
           </div>
         ))}
       </div>
-      <div className="flex justify-center gap-6 text-[9px] text-zinc-500 uppercase tracking-widest font-bold font-mono">
-        <div className="flex items-center gap-1.5"><div className="w-2 h-2 bg-cyber-primary"></div> High Risk</div>
-        <div className="flex items-center gap-1.5"><div className="w-2 h-2 bg-zinc-800"></div> Low Risk</div>
+      <div className="flex justify-center gap-6 text-[11px] font-semibold uppercase tracking-wider">
+        <div className="flex items-center gap-1.5 text-zinc-400"><div className="w-1.5 h-1.5 rounded-full bg-cyber-primary"></div> High Risk</div>
+        <div className="flex items-center gap-1.5 text-zinc-500"><div className="w-1.5 h-1.5 rounded-full bg-zinc-800"></div> Low Risk</div>
       </div>
     </div>
   </div>
@@ -75,14 +79,14 @@ export const BarChart = () => (
 export const Heatmap = () => {
   const colors = ['#0D0D0D', '#1A1A1A', '#2A2A2A', '#3A3A3A', '#c5f82a'];
   return (
-    <div className="bg-cyber-surface border border-cyber-border rounded-none p-5 flex flex-col h-full shadow-brutalist">
-      <div className="text-xs font-bold text-zinc-400 mb-4 uppercase tracking-widest font-mono">Churn Score Heatmap</div>
+    <div className="premium-card p-6 flex flex-col h-full">
+      <div className="text-label mb-6">Churn Score Heatmap</div>
       <div className="flex-1 grid grid-cols-6 gap-1.5 content-center">
         {Array.from({length: 24}).map((_, i) => {
           const colorIndex = i === 13 || i === 22 || i === 5 ? 4 : i % 7 === 0 ? 3 : i % 3 === 0 ? 2 : 1;
           const color = colors[colorIndex];
           return (
-            <div key={i} className="aspect-square rounded-none" 
+            <div key={i} className="aspect-square rounded-md transition-transform hover:scale-110" 
                  style={{backgroundColor: color}}></div>
           );
         })}
@@ -92,23 +96,21 @@ export const Heatmap = () => {
 };
 
 export const ModelCard = ({ name, latency, accuracy, accLabel = "Accuracy" }) => (
-  <div className="bg-cyber-surface border border-cyber-border rounded-none p-6 flex flex-col justify-between shadow-brutalist relative overflow-hidden">
-    <div className="absolute top-0 left-0 w-8 h-px bg-cyber-primary/40"></div>
-    <div className="absolute top-0 left-0 w-px h-8 bg-cyber-primary/40"></div>
+  <div className="premium-card p-6 flex flex-col justify-between group">
     <div className="flex justify-between items-center mb-6">
-      <div className="text-zinc-200 font-bold uppercase tracking-wider font-mono text-sm">{name}</div>
-      <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold font-mono">Latency</div>
+      <div className="text-value text-xl text-white font-display uppercase tracking-wider">{name}</div>
+      <div className="text-label">Latency</div>
     </div>
-    <div className="text-4xl font-bold text-cyber-primary mb-10 font-mono">
+    <div className="text-4xl text-value text-cyber-primary mb-10 font-display">
       {latency}
     </div>
     <div>
-      <div className="flex justify-between text-[10px] text-zinc-500 mb-3 uppercase tracking-widest font-bold font-mono">
+      <div className="flex justify-between text-[11px] text-zinc-500 mb-3 font-semibold uppercase tracking-widest font-mono">
         <span>{accLabel}</span>
         <span className="text-cyber-primary">{accuracy}</span>
       </div>
-      <div className="h-1 w-full bg-cyber-border rounded-none overflow-hidden">
-        <div className="h-full bg-cyber-primary rounded-none" style={{width: accuracy}}></div>
+      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+        <div className="h-full bg-cyber-primary rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(197,248,42,0.4)]" style={{width: accuracy}}></div>
       </div>
     </div>
   </div>
@@ -123,19 +125,19 @@ export const FeatureImportance = () => {
     { name: 'Days_Since', val: '25%' },
   ];
   return (
-    <div className="bg-cyber-surface border border-cyber-border rounded-none p-6 shadow-brutalist relative">
-      <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-cyber-primary/20 pointer-events-none"></div>
+    <div className="premium-card p-6 shadow-2xl relative">
       <div className="flex justify-between items-center mb-8">
-        <div className="text-zinc-200 font-bold uppercase tracking-wider font-mono text-sm">XGBoost (Local)</div>
-        <div className="text-[9px] text-cyber-primary uppercase tracking-widest font-bold font-mono">Shap Importance</div>
+        <div className="text-value text-xl text-white font-display uppercase tracking-wider">XGBoost Importance</div>
+        <div className="text-label text-cyber-primary/80">SHAP VECTOR</div>
       </div>
       <div className="space-y-4">
         {features.map((f, i) => (
           <div key={i} className="flex items-center gap-4">
-            <div className="w-20 text-[10px] text-zinc-500 font-mono text-right truncate font-bold uppercase">{f.name}</div>
-            <div className="flex-1 h-1 bg-cyber-border rounded-none overflow-hidden relative flex items-center">
-              <div className="h-full bg-cyber-primary rounded-none transition-all duration-1000" style={{width: f.val}}></div>
+            <div className="w-24 text-[11px] text-zinc-400 font-semibold uppercase tracking-wide text-right truncate font-display">{f.name}</div>
+            <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden relative flex items-center">
+              <div className="h-full bg-cyber-primary rounded-full transition-all duration-1000" style={{width: f.val}}></div>
             </div>
+            <div className="w-8 text-[11px] text-zinc-500 font-mono text-right">{f.val}</div>
           </div>
         ))}
       </div>
@@ -144,44 +146,44 @@ export const FeatureImportance = () => {
 };
 
 export const EscalationCard = ({ id, time, badgeText, badgeColor, reason, offers, features, onViewDetails, onTakeOwnership }) => (
-  <div className="bg-cyber-surface border border-cyber-border rounded-none p-5 mb-4 shadow-brutalist group hover:border-cyber-primary/40 transition-all relative border-l-2 border-l-cyber-alert/50">
-    <div className="flex justify-between items-start mb-2">
-      <div className="text-zinc-200 font-bold text-lg font-mono tracking-tighter">{id}</div>
-      <div className="text-zinc-600 text-[10px] font-mono font-bold uppercase">{time}</div>
+  <div className="premium-card p-6 mb-4 group hover:scale-[1.01]">
+    <div className="accent-line !bg-cyber-alert/60"></div>
+    <div className="flex justify-between items-start mb-4">
+      <div className="text-value text-2xl text-white font-display uppercase tracking-wider">{id}</div>
+      <div className="text-zinc-500 text-[11px] font-semibold uppercase tracking-widest font-mono">{time}</div>
     </div>
-    <div className={`inline-block px-2 py-0.5 rounded-none text-[9px] font-bold uppercase tracking-widest mb-4 border ${badgeColor}`}>
+    <div className={`inline-block px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] mb-6 border font-display ${badgeColor}`}>
       {badgeText}
     </div>
-    <div className="mb-4">
-      <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold font-mono mb-1">Failure_Reason</div>
-      <div className="text-zinc-400 text-xs leading-relaxed font-mono">{reason}</div>
-    </div>
     <div className="mb-6">
-      <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold font-mono mb-1">Offers_Attempted</div>
-      <div className="text-zinc-300 text-[11px] mb-3 whitespace-pre-line font-mono">{offers}</div>
-      <div className="space-y-3">
+      <div className="text-label mb-2">Failure Reason</div>
+      <div className="text-zinc-400 text-sm leading-relaxed font-sans">{reason}</div>
+    </div>
+    <div className="mb-8">
+      <div className="text-label mb-3">Intervention Status</div>
+      <div className="space-y-4">
         {features.map((f, i) => (
           <div key={i} className="flex items-center gap-3">
-            <div className="w-16 text-[9px] text-zinc-500 font-mono font-bold uppercase truncate">{f.name}</div>
-            <div className="flex-1 h-1 bg-cyber-border rounded-none overflow-hidden">
-              <div className="h-full bg-cyber-primary rounded-none" style={{width: f.val}}></div>
+            <div className="w-20 text-[11px] text-zinc-500 font-semibold uppercase tracking-wide truncate font-display">{f.name}</div>
+            <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+              <div className="h-full bg-cyber-primary rounded-full transition-all duration-700" style={{width: f.val}}></div>
             </div>
           </div>
         ))}
       </div>
     </div>
-    <div className="flex gap-3 mt-2">
+    <div className="flex gap-4 mt-2">
       <button 
         onClick={() => onViewDetails && onViewDetails(id)}
-        className="flex-1 py-2.5 rounded-none border border-cyber-border text-zinc-400 font-mono font-bold text-[10px] uppercase tracking-wider hover:bg-white/5 hover:text-white transition-all"
+        className="flex-1 py-3 rounded-xl border border-white/10 text-zinc-300 font-display text-[14px] uppercase tracking-widest hover:bg-white/5 hover:border-white/20 transition-all"
       >
-        View_Details
+        Analyze Details
       </button>
       <button 
         onClick={() => onTakeOwnership && onTakeOwnership(id)}
-        className="flex-1 py-2.5 rounded-none bg-cyber-primary text-cyber-black font-mono font-bold text-[10px] uppercase tracking-wider hover:brightness-110 transition-all"
+        className="flex-1 py-3 rounded-xl bg-cyber-primary text-cyber-black font-display text-[14px] uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(197,248,42,0.2)]"
       >
-        Take_Ownership
+        Claim Case
       </button>
     </div>
   </div>
@@ -191,50 +193,49 @@ export const EscalationDetailsModal = ({ escalation, onClose, triggerAction, onC
   if (!escalation) return null;
   return (
     <div className="fixed inset-0 z-[1100] flex items-center justify-center p-6">
-      <div className="absolute inset-0 bg-cyber-black/90 backdrop-blur-sm" onClick={onClose}></div>
-      <div className="bg-cyber-surface border border-cyber-border rounded-none w-full max-w-2xl max-h-[90vh] overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-200 flex flex-col">
-        <div className="absolute top-0 left-0 w-16 h-1 bg-cyber-primary"></div>
-        <div className="absolute top-0 left-0 w-1 h-16 bg-cyber-primary"></div>
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose}></div>
+      <div className="glass-card w-full max-w-2xl max-h-[90vh] overflow-hidden relative animate-in zoom-in-95 duration-300 flex flex-col rounded-2xl">
+        <div className="accent-line !h-2 !w-full !bg-gradient-to-r from-cyber-primary via-cyber-alert to-cyber-primary"></div>
         
-        <div className="p-8 border-b border-cyber-border flex justify-between items-start bg-cyber-black/20">
-          <div>
-            <div className="text-[10px] text-cyber-primary font-bold uppercase tracking-widest mb-1 font-mono">/ CASE_FILE / INTEL_REPORT /</div>
-            <h2 className="text-3xl font-black text-white font-mono tracking-tighter uppercase">{escalation.id}</h2>
+        <div className="p-8 border-b border-white/5 flex justify-between items-start bg-white/2">
+           <div>
+            <div className="text-label text-cyber-primary/80 mb-2">Detailed Intel Report</div>
+            <h2 className="text-4xl text-value text-white font-display uppercase tracking-wider">{escalation.id}</h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-none transition-colors text-zinc-500 hover:text-white border border-transparent hover:border-cyber-border">
-            <X size={24} />
+          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-zinc-500 hover:text-white">
+            <X size={20} />
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-10">
           <div className="grid grid-cols-2 gap-8">
-            <div className="p-4 border border-cyber-border bg-cyber-black/40">
-              <div className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mb-3 font-mono">STATUS_VECTOR</div>
-              <div className={`inline-block px-3 py-1 rounded-none text-[10px] font-bold uppercase tracking-wider border ${escalation.badgeColor}`}>
+            <div className="p-6 rounded-xl border border-white/5 bg-white/2">
+              <div className="text-label mb-4">Threat Vector</div>
+              <div className={`inline-block px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-[0.2em] border font-display ${escalation.badgeColor}`}>
                 {escalation.badgeText}
               </div>
-              <div className="mt-4 text-zinc-500 text-[10px] font-mono uppercase font-bold">Detected: {escalation.time}</div>
+              <div className="mt-6 text-zinc-500 text-[11px] font-semibold uppercase tracking-widest font-mono">Detected: {escalation.time}</div>
             </div>
-            <div className="p-4 border border-cyber-border bg-cyber-black/40">
-              <div className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mb-3 font-mono">PRIORITY_MATRIX</div>
+            <div className="p-6 rounded-xl border border-white/5 bg-white/2">
+              <div className="text-label mb-4">Risk Matrix</div>
               <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded-none bg-cyber-alert animate-pulse shadow-[0_0_12px_rgba(255,62,62,0.4)]"></div>
-                <span className="text-white font-mono font-black tracking-tighter text-lg italic">CRITICAL_ESC</span>
+                <div className="w-2.5 h-2.5 rounded-full bg-cyber-alert animate-pulse shadow-[0_0_15px_#FF3E3E]"></div>
+                <span className="text-white text-value text-2xl font-display uppercase tracking-widest">CRITICAL_ESC</span>
               </div>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest font-mono">AGENT_REASONING_LOGS</div>
-            <div className="bg-cyber-black border border-cyber-border rounded-none p-5 font-mono text-[11px] text-zinc-400 leading-relaxed border-l-2 border-l-cyber-primary/50 relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-2 opacity-10 font-black text-4xl select-none">AI</div>
+            <div className="text-label">Agent Reasoning Log</div>
+            <div className="bg-black/40 rounded-xl border border-white/5 p-6 text-[15px] text-zinc-400 leading-relaxed relative overflow-hidden font-sans">
+              <div className="absolute top-0 right-0 p-4 opacity-5 text-value text-8xl pointer-events-none font-display">AI</div>
               {escalation.reason}
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest font-mono">OFFER_SEQUENCE_ATTEMPTED</div>
-            <div className="text-zinc-300 bg-cyber-black/30 border border-cyber-border rounded-none p-4 font-mono text-[11px] whitespace-pre-line">
+            <div className="text-label">Offer Sequence</div>
+            <div className="text-cyber-primary bg-black/40 rounded-xl border border-white/5 p-5 font-mono text-[13px] leading-relaxed tracking-tight shadow-inner system-log">
                {escalation.offers}
             </div>
           </div>
@@ -244,21 +245,21 @@ export const EscalationDetailsModal = ({ escalation, onClose, triggerAction, onC
             <div className="space-y-4">
               {escalation.history && escalation.history.length > 0 ? (
                 escalation.history.map((h, i) => (
-                  <div key={i} className="bg-cyber-black/40 border border-cyber-border rounded-none p-4 relative group">
+                  <div key={i} className="bg-cyber-black/40 border border-cyber-border rounded-xl p-4 relative group">
                     <div className="absolute top-0 left-0 w-1 h-full bg-cyber-primary/20 group-hover:bg-cyber-primary/60 transition-all"></div>
                     <div className="flex justify-between items-start mb-2">
-                      <span className="text-cyber-primary font-bold text-[10px] uppercase font-mono tracking-tighter">{h.action}</span>
-                      <span className="text-zinc-600 text-[9px] font-mono font-bold uppercase">{new Date(h.timestamp).toLocaleString()}</span>
+                      <span className="text-cyber-primary font-semibold text-[12px] uppercase font-display tracking-wider">{h.action}</span>
+                      <span className="text-zinc-600 text-[10px] font-mono font-semibold uppercase">{new Date(h.timestamp).toLocaleString()}</span>
                     </div>
-                    <div className="text-[11px] text-zinc-400 font-mono leading-tight mb-3">{h.reason}</div>
-                    <div className="flex gap-4 text-[9px] font-mono font-bold uppercase">
-                      <span className="text-zinc-500">RISK_SIG: <span className="text-cyber-warning">{h.churn_risk}</span></span>
-                      <span className="text-zinc-500">OUTCOME: <span className="text-cyber-secondary">{h.result}</span></span>
+                    <div className="text-[12px] text-zinc-400 font-mono leading-tight mb-3">{h.reason}</div>
+                    <div className="flex gap-4 text-[10px] font-mono font-semibold uppercase">
+                      <span className="text-zinc-500">RISK_SIG: <span className="text-cyber-warning font-display text-[12px]">{h.churn_risk}</span></span>
+                      <span className="text-zinc-500">OUTCOME: <span className="text-cyber-secondary font-display text-[12px]">{h.result}</span></span>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-zinc-600 text-[10px] font-mono font-bold uppercase p-6 bg-cyber-black/40 rounded-none border border-cyber-border text-center">
+                <div className="text-zinc-600 text-[11px] font-mono font-bold uppercase p-6 bg-cyber-black/40 rounded-xl border border-cyber-border text-center">
                   NO_RECORDS_FOUND
                 </div>
               )}
@@ -266,16 +267,16 @@ export const EscalationDetailsModal = ({ escalation, onClose, triggerAction, onC
           </div>
         </div>
 
-        <div className="p-8 bg-cyber-black/60 border-t border-cyber-border flex gap-4">
+        <div className="p-8 bg-white/5 border-t border-white/5 flex gap-4">
           <button 
             onClick={() => { onClaim ? onClaim(escalation.id) : triggerAction(`Escalation ${escalation.id} assigned to Retention Specialist`); if(!onClaim) onClose(); }}
-            className="flex-1 py-4 rounded-none bg-cyber-primary text-cyber-black font-mono font-black text-sm uppercase tracking-wider shadow-brutalist hover:brightness-110 active:translate-y-1 transition-all"
+            className="flex-1 py-4 rounded-xl bg-cyber-primary text-cyber-black font-display text-lg uppercase tracking-widest shadow-xl hover:brightness-110 active:scale-95 transition-all"
           >
-            Assign_to_Specialist
+            Assign Specialist
           </button>
           <button 
             onClick={onClose}
-            className="px-10 py-4 rounded-none border border-cyber-border text-zinc-500 font-mono font-bold text-sm uppercase tracking-wider hover:bg-white/5 hover:text-white transition-all"
+            className="px-10 py-4 rounded-xl border border-white/10 text-zinc-400 font-display text-lg uppercase tracking-widest hover:bg-white/5 hover:text-white transition-all"
           >
             Cancel
           </button>
@@ -297,14 +298,14 @@ export const ChainOfThoughtTerminal = ({ logs = '' }) => {
   return (
     <div 
       ref={scrollRef}
-      className="bg-cyber-black border border-cyber-border rounded-none p-5 font-mono text-[10px] h-52 overflow-y-auto mb-6 relative custom-scrollbar border-l-2 border-l-cyber-primary shadow-inner"
+      className="bg-cyber-black border border-cyber-border rounded-xl p-5 font-mono text-[12px] h-52 overflow-y-auto mb-6 relative custom-scrollbar border-l-2 border-l-cyber-primary shadow-inner"
     >
       <div className="sticky top-0 bg-cyber-black/80 backdrop-blur-sm pb-2 border-b border-cyber-border/20 mb-3">
-        <div className="text-cyber-primary/70 font-bold uppercase tracking-widest text-[9px]">/ AGENT_REASONING_ENGINE / VERBOSE_MODE /</div>
+        <div className="text-label text-cyber-primary/70">/ AGENT_REASONING_ENGINE / VERBOSE_MODE /</div>
       </div>
-      <div className="text-zinc-600 mb-1">$ SRE_AGENT_CORE --init --stream</div>
-      <div className="text-zinc-600 mb-4">$ CONNECTING_TO_ORCHESTRATOR... [OK]</div>
-      <div className="text-cyber-primary whitespace-pre-wrap leading-relaxed opacity-90">
+      <div className="text-zinc-600 mb-1 font-mono uppercase text-[10px] tracking-tight">$ SRE_AGENT_CORE --init --stream</div>
+      <div className="text-zinc-600 mb-4 font-mono uppercase text-[10px] tracking-tight">$ CONNECTING_TO_ORCHESTRATOR... [OK]</div>
+      <div className="text-cyber-primary whitespace-pre-wrap leading-relaxed opacity-90 system-log text-[13px]">
         {logs || 'Waiting for pipeline execution...'}
         <span className="inline-block w-2 h-3 bg-[#c5f82a] animate-pulse ml-1 align-middle"></span>
       </div>
@@ -323,10 +324,10 @@ export const AuditLogTable = ({ logs: auditLogs = [], searchTerm = '', onSearch 
   ];
 
   return (
-    <div className="bg-cyber-surface border border-cyber-border rounded-none p-5 flex-1 flex flex-col min-h-[400px] relative shadow-brutalist">
+    <div className="bg-cyber-surface border border-cyber-border rounded-xl p-5 flex-1 flex flex-col min-h-[400px] relative shadow-lg">
       <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-cyber-primary/30 pointer-events-none"></div>
       <div className="flex justify-between items-center mb-6">
-        <div className="text-xs font-bold text-zinc-400 uppercase tracking-[0.2em] font-mono">/ GLOBAL_AUDIT_LOG / ACCESS_RECORDS</div>
+        <div className="text-label text-zinc-400 font-mono">/ GLOBAL_AUDIT_LOG / ACCESS_RECORDS</div>
         <div className="relative">
           <input 
             id="audit-log-search"
@@ -335,24 +336,24 @@ export const AuditLogTable = ({ logs: auditLogs = [], searchTerm = '', onSearch 
             onChange={(e) => onSearch(e.target.value)}
             placeholder="FILTER_RECORDS..." 
             aria-label="Search audit logs"
-            className="bg-cyber-black border border-cyber-border rounded-none pl-8 pr-4 py-1.5 text-[10px] text-zinc-400 focus:outline-none focus:border-cyber-primary transition-colors w-64 font-mono uppercase font-bold" 
+            className="bg-cyber-black border border-cyber-border rounded-lg pl-10 pr-4 py-3 text-sm text-zinc-400 focus:outline-none focus:border-cyber-primary transition-colors w-64 system-log font-bold" 
           />
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600">
             <label htmlFor="audit-log-search" className="sr-only">Search audit logs</label>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           </div>
         </div>
       </div>
       
       <div className="flex-1 overflow-auto custom-scrollbar">
-        <table className="w-full text-left text-[10px] text-zinc-500">
-          <thead className="text-zinc-600 uppercase tracking-widest font-black sticky top-0 bg-cyber-surface z-10 border-b border-cyber-border">
+        <table className="w-full text-left text-xs text-zinc-500 border-collapse">
+          <thead className="text-zinc-500 uppercase tracking-widest font-display sticky top-0 bg-cyber-surface z-10 border-b border-cyber-border">
             <tr>
-              <th className="pb-3 font-mono">TIMESTAMP</th>
-              <th className="pb-3 font-mono">ENTITY_ID</th>
-              <th className="pb-3 font-mono">VECTOR</th>
-              <th className="pb-3 font-mono">OP_CODE</th>
-              <th className="pb-3 font-mono">INTEL_DATA</th>
+              <th className="pb-4 text-[12px]">TIMESTAMP</th>
+              <th className="pb-4 text-[12px]">ENTITY_ID</th>
+              <th className="pb-4 text-[12px]">VECTOR</th>
+              <th className="pb-4 text-[12px]">OP_CODE</th>
+              <th className="pb-4 text-[12px]">INTEL_DATA</th>
             </tr>
           </thead>
           <tbody className="font-mono">
@@ -361,7 +362,7 @@ export const AuditLogTable = ({ logs: auditLogs = [], searchTerm = '', onSearch 
                 <td className="py-3 text-zinc-400">{log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : log.time}</td>
                 <td className="py-3 text-zinc-200 font-bold">{log.user_id || log.id}</td>
                 <td className="py-3">
-                  <span className={`px-2 py-0.5 rounded-none font-bold text-cyber-black text-[9px] uppercase tracking-wider ${
+                  <span className={`px-2.5 py-0.5 rounded-full font-bold text-cyber-black text-[10px] uppercase tracking-wider ${
                     (log.risk_level === 'LOW' || log.status === 'PASS') ? 'bg-cyber-primary' : 
                     (log.risk_level === 'MEDIUM' || log.status === 'WARN') ? 'bg-cyber-warning' : 'bg-cyber-alert text-white'
                   }`}>
@@ -380,19 +381,19 @@ export const AuditLogTable = ({ logs: auditLogs = [], searchTerm = '', onSearch 
 };
 
 export const ActivityKPICard = ({ title, value, hasTrend = true }) => (
-  <div className="bg-cyber-surface border border-cyber-border rounded-none p-5 flex flex-col justify-between shadow-brutalist relative border-l-2 border-l-cyber-primary">
+  <div className="bg-cyber-surface border border-cyber-border rounded-xl p-5 flex flex-col justify-between shadow-lg relative border-l-2 border-l-cyber-primary">
     <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-white/5"></div>
-    <div className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold font-mono mb-2">{title}</div>
+    <div className="text-label mb-2">{title}</div>
     <div className="flex items-end gap-2 mb-4">
-      <div className="text-3xl font-black text-cyber-primary font-mono">{value}</div>
+      <div className="text-4xl text-cyber-primary font-display uppercase tracking-wider">{value}</div>
       {hasTrend && (
-        <div className="text-cyber-primary flex items-center mb-1">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        <div className="text-cyber-primary flex items-center mb-2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
         </div>
       )}
-      {!hasTrend && <div className="w-1.5 h-1.5 bg-cyber-primary mb-2 shadow-[0_0_8px_rgba(197,248,42,0.6)]"></div>}
+      {!hasTrend && <div className="w-2 h-2 bg-cyber-primary mb-3 shadow-[0_0_8px_rgba(197,248,42,0.6)]"></div>}
     </div>
-    <div className="h-1 w-full bg-cyber-border rounded-none overflow-hidden">
+    <div className="h-1.5 w-full bg-cyber-border rounded-full overflow-hidden">
       <div className="h-full bg-cyber-primary opacity-80" style={{width: '75%'}}></div>
     </div>
   </div>
@@ -424,7 +425,7 @@ export const LiveEventCard = (props) => {
 
   return (
     <div 
-      className={`bg-cyber-surface border ${statusColor} rounded-none p-4 mb-3 flex flex-col gap-3 group hover:bg-cyber-black transition-all relative overflow-hidden animate-event-in shadow-brutalist cursor-pointer border-l-4 ${status === 'FAIL' ? 'border-l-cyber-alert' : 'border-l-cyber-primary'}`}
+      className={`bg-cyber-surface border ${statusColor} rounded-xl p-4 mb-3 flex flex-col gap-3 group hover:bg-cyber-black transition-all relative overflow-hidden animate-event-in shadow-lg cursor-pointer border-l-4 ${status === 'FAIL' ? 'border-l-cyber-alert' : 'border-l-cyber-primary'}`}
       onClick={() => onChainClick && onChainClick(chainId)}
     >
       {/* HUD Scanner Effect */}
@@ -434,40 +435,40 @@ export const LiveEventCard = (props) => {
 
       <div className="flex justify-between items-center relative z-10">
         <div className="flex items-center gap-2">
-          <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-none border font-mono text-[9px] font-black tracking-widest uppercase ${agent.color}`}>
+          <div className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border font-mono text-[10px] font-bold tracking-widest uppercase ${agent.color}`}>
             {agent.icon}
             {agent.label}
           </div>
-          <span className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest font-mono">/ {type || 'OP'}</span>
+          <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider font-mono">/ {type || 'OP'}</span>
         </div>
         <div className="flex items-center gap-2 text-zinc-600">
           <Clock size={10} />
-          <span className="text-[9px] font-mono font-bold">{displayTime}</span>
+          <span className="text-[10px] font-mono font-bold tracking-tight">{displayTime}</span>
         </div>
       </div>
 
       <div className="flex flex-col gap-2 relative z-10">
         <div className="flex justify-between items-start">
-          <div className="text-[11px] text-zinc-200 font-bold leading-tight line-clamp-2 flex-1 font-mono uppercase tracking-tight">
+          <div className="text-[13px] text-zinc-200 font-medium leading-relaxed line-clamp-2 flex-1 system-log">
             {reasoning || props.message || props.desc}
           </div>
           {score && (
             <div className="ml-4 flex flex-col items-end p-2 bg-cyber-black border border-cyber-border">
-              <span className="text-[7px] text-zinc-500 uppercase font-black tracking-[0.2em]">RISK_SIG</span>
-              <span className="text-xs font-mono font-black text-cyber-primary">{score}</span>
+              <span className="text-[8px] text-zinc-600 uppercase font-bold tracking-[0.2em] mb-0.5">RISK_SIG</span>
+              <span className="text-xs font-mono font-bold text-cyber-primary">{score}</span>
             </div>
           )}
         </div>
         
         <div className="flex items-center gap-6 mt-1 border-t border-cyber-border pt-2">
           <div className="flex items-center gap-2">
-            <span className="text-[8px] text-zinc-600 uppercase font-black font-mono">TARGET_ID:</span>
-            <span className="text-[10px] text-zinc-300 font-mono font-bold tracking-tighter uppercase">{displayId}</span>
+            <span className="text-[9px] text-zinc-600 uppercase font-bold font-mono">TARGET_ID:</span>
+            <span className="text-[11px] text-zinc-300 font-mono font-bold tracking-tighter uppercase">{displayId}</span>
           </div>
           <div className="flex items-center gap-2">
             <Link2 size={10} className="text-zinc-600" />
-            <span className="text-[8px] text-zinc-600 uppercase font-black font-mono">CHAIN_LINK:</span>
-            <span className="text-[10px] text-cyber-primary font-mono font-bold tracking-tighter">{chainId || 'RET-0000'}</span>
+            <span className="text-[9px] text-zinc-600 uppercase font-bold font-mono">CHAIN_LINK:</span>
+            <span className="text-[11px] text-cyber-primary font-mono font-bold tracking-tighter">{chainId || 'RET-0000'}</span>
           </div>
         </div>
       </div>
@@ -475,19 +476,19 @@ export const LiveEventCard = (props) => {
       <div className="flex justify-between items-center pt-2 relative z-10">
         <div className="flex gap-2">
           {metadata && Object.entries(metadata).slice(0, 2).map(([key, val]) => (
-            <div key={key} className="bg-cyber-black px-1.5 py-0.5 rounded-none border border-cyber-border text-[8px] text-zinc-500 font-mono font-bold uppercase">
+            <div key={key} className="bg-cyber-black px-1.5 py-0.5 rounded-full border border-cyber-border text-[8px] text-zinc-500 font-mono font-bold uppercase">
               {key.slice(0, 4)}: {val.toString().slice(0, 8)}
             </div>
           ))}
         </div>
         <div className="flex flex-col items-end min-w-[80px]">
           <div className="flex justify-between w-full mb-1">
-            <span className="text-[7px] text-zinc-600 uppercase font-black">CONFIDENCE</span>
-            <span className={`text-[9px] font-mono font-black ${parseFloat(confidence) > 80 ? 'text-cyber-primary' : 'text-cyber-warning'}`}>
+            <span className="text-[8px] text-zinc-600 uppercase font-bold">CONFIDENCE</span>
+            <span className={`text-[10px] font-mono font-bold ${parseFloat(confidence) > 80 ? 'text-cyber-primary' : 'text-cyber-warning'}`}>
               {confidence || '92.4%'}
             </span>
           </div>
-          <div className="w-full h-1 bg-cyber-black rounded-none overflow-hidden">
+          <div className="w-full h-1 bg-cyber-black rounded-full overflow-hidden">
             <div 
               className={`h-full ${parseFloat(confidence) > 80 ? 'bg-cyber-primary' : 'bg-cyber-warning'}`} 
               style={{ width: confidence || '92.4%' }}
@@ -520,19 +521,19 @@ export const DecisionTimeline = ({ events, onClose }) => {
       <div className="flex justify-between items-center p-6 border-b border-cyber-primary/20 bg-cyber-black/80 backdrop-blur-xl z-20">
         <div className="flex flex-col">
           <div className="flex items-center gap-4">
-            <div className={`w-3 h-3 ${isComplete ? 'bg-cyber-primary' : 'bg-cyber-warning animate-pulse'} shadow-[0_0_15px_currentColor]`}></div>
-            <h3 className="text-xl font-black text-white tracking-[0.2em] uppercase font-mono">
+            <div className={`w-3 h-3 ${isComplete ? 'bg-cyber-primary' : 'bg-cyber-warning animate-pulse'} shadow-[0_0_15px_currentColor] rounded-full`}></div>
+            <h3 className="text-xl text-value text-white uppercase">
               WORKFLOW_TRACE <span className="text-cyber-primary">[{chainId}]</span>
             </h3>
           </div>
           <div className="flex gap-4 mt-2 pl-7">
-            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-cyber-primary/5 border border-cyber-primary/20">
-              <span className="text-[7px] text-zinc-500 font-black uppercase tracking-widest">AVG_CONFIDENCE</span>
-              <span className="text-[10px] text-cyber-primary font-mono font-bold">{avgConfidence}%</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-cyber-primary/5 border border-cyber-primary/20">
+              <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">AVG_CONFIDENCE</span>
+              <span className="text-[11px] text-cyber-primary font-mono font-bold">{avgConfidence}%</span>
             </div>
-            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-cyber-secondary/5 border border-cyber-secondary/20">
-              <span className="text-[7px] text-zinc-500 font-black uppercase tracking-widest">TOTAL_LATENCY</span>
-              <span className="text-[10px] text-cyber-secondary font-mono font-bold">{totalDuration}s</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-cyber-secondary/5 border border-cyber-secondary/20">
+              <span className="text-[8px] text-zinc-500 font-bold uppercase tracking-widest">TOTAL_LATENCY</span>
+              <span className="text-[11px] text-cyber-secondary font-mono font-bold">{totalDuration}s</span>
             </div>
           </div>
         </div>
@@ -582,9 +583,9 @@ export const DecisionTimeline = ({ events, onClose }) => {
                 </div>
 
                 {/* Event Card */}
-                <div className={`flex-1 bg-cyber-surface border rounded-none p-0 transition-all duration-300 hover:translate-x-1 ${
+                <div className={`flex-1 bg-cyber-surface border rounded-xl p-0 transition-all duration-300 hover:translate-x-1 ${
                   isFailed ? 'border-cyber-alert/40' : 'border-cyber-border group-hover:border-cyber-primary/40'
-                } shadow-brutalist relative overflow-hidden`}>
+                } shadow-xl relative overflow-hidden`}>
                   
                   {/* Agent Header */}
                   <div className={`px-4 py-2 border-b flex justify-between items-center ${
@@ -594,19 +595,19 @@ export const DecisionTimeline = ({ events, onClose }) => {
                       <div className={`p-1.5 border ${agent.color}`}>
                         {agent.icon}
                       </div>
-                      <span className="text-[10px] font-black font-mono tracking-widest text-white uppercase italic">
+                      <span className="text-label !text-white !font-bold">
                         {agent.label}
                       </span>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="flex flex-col items-end">
-                        <span className="text-[6px] text-zinc-600 font-black uppercase">EXEC_TIME</span>
-                        <span className="text-[9px] text-zinc-400 font-mono font-bold">{event.timestamp}</span>
+                        <span className="text-[7px] text-zinc-600 font-bold uppercase tracking-tighter">EXEC_TIME</span>
+                        <span className="text-[10px] text-zinc-400 font-mono font-bold">{event.timestamp}</span>
                       </div>
                       <div className={`h-6 w-px ${isFailed ? 'bg-cyber-alert/20' : 'bg-cyber-border'}`}></div>
                       <div className="flex flex-col items-end">
-                        <span className="text-[6px] text-zinc-600 font-black uppercase">STATUS_VECTOR</span>
-                        <span className={`text-[9px] font-black font-mono ${isFailed ? 'text-cyber-alert' : 'text-cyber-primary'}`}>
+                        <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-tight">STATUS_VECTOR</span>
+                        <span className={`text-[11px] font-bold font-mono ${isFailed ? 'text-cyber-alert' : 'text-cyber-primary'}`}>
                           {isFailed ? 'ERR_INTERRUPT' : 'SIGNAL_STABLE'}
                         </span>
                       </div>
@@ -623,12 +624,12 @@ export const DecisionTimeline = ({ events, onClose }) => {
                     {/* Metadata Grid */}
                     <div className="grid grid-cols-4 gap-4 pt-4 border-t border-cyber-border/40">
                       <div className="flex flex-col">
-                        <span className="text-[7px] text-zinc-600 font-black uppercase tracking-[0.2em] mb-1">Confidence</span>
+                        <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest mb-1">Confidence</span>
                         <div className="flex items-center gap-2">
-                           <span className={`text-[10px] font-mono font-black ${parseFloat(event.confidence) > 80 ? 'text-cyber-primary' : 'text-cyber-warning'}`}>
+                           <span className={`text-[11px] font-mono font-bold ${parseFloat(event.confidence) > 80 ? 'text-cyber-primary' : 'text-cyber-warning'}`}>
                             {event.confidence}
                           </span>
-                          <div className="flex-1 h-1 bg-cyber-black max-w-[40px]">
+                          <div className="flex-1 h-1 bg-cyber-black max-w-[40px] rounded-full overflow-hidden">
                             <div 
                               className={`h-full ${parseFloat(event.confidence) > 80 ? 'bg-cyber-primary' : 'bg-cyber-warning'}`} 
                               style={{ width: event.confidence }}
@@ -638,22 +639,22 @@ export const DecisionTimeline = ({ events, onClose }) => {
                       </div>
                       
                       <div className="flex flex-col">
-                        <span className="text-[7px] text-zinc-600 font-black uppercase tracking-[0.2em] mb-1">Latency</span>
-                        <span className="text-[10px] text-zinc-300 font-mono font-bold">
+                        <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest mb-1">Latency</span>
+                        <span className="text-[11px] text-zinc-300 font-mono font-bold">
                           {event.metadata?.duration || '0.12s'}
                         </span>
                       </div>
 
                       <div className="flex flex-col">
-                        <span className="text-[7px] text-zinc-600 font-black uppercase tracking-[0.2em] mb-1">Retries</span>
-                        <span className="text-[10px] text-zinc-300 font-mono font-bold">
+                        <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest mb-1">Retries</span>
+                        <span className="text-[11px] text-zinc-300 font-mono font-bold">
                           {event.metadata?.retries?.toString().padStart(2, '0') || '00'}
                         </span>
                       </div>
 
                       <div className="flex flex-col">
-                        <span className="text-[7px] text-zinc-600 font-black uppercase tracking-[0.2em] mb-1">Workflow_ID</span>
-                        <span className="text-[10px] text-cyber-primary/70 font-mono font-bold truncate">
+                        <span className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest mb-1">Workflow_ID</span>
+                        <span className="text-[11px] text-cyber-primary/70 font-mono font-bold truncate tracking-tighter">
                           {chainId}
                         </span>
                       </div>
@@ -670,19 +671,19 @@ export const DecisionTimeline = ({ events, onClose }) => {
       </div>
       
       {/* Footer Info */}
-      <div className="p-4 bg-cyber-black border-t border-cyber-border flex justify-between items-center text-[8px] font-black uppercase tracking-[0.4em] text-zinc-700">
+      <div className="p-4 bg-cyber-black border-t border-cyber-border flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-zinc-700">
         <div className="flex gap-6">
           <div className="flex items-center gap-2">
-            <div className="w-1 h-1 bg-cyber-primary"></div>
+            <div className="w-1 h-1 bg-cyber-primary rounded-full"></div>
             <span>NODE_INTEGRITY: VERIFIED</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-1 h-1 bg-cyber-primary"></div>
+            <div className="w-1 h-1 bg-cyber-primary rounded-full"></div>
             <span>ENCRYPTION: AES-256</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-cyber-primary/30">SENTIENT_RETENTION_ENGINE // AI_OBSERVABILITY_v4.2</span>
+          <span className="text-cyber-primary/30 font-mono">SENTIENT_RETENTION_ENGINE // AI_OBSERVABILITY_v4.2</span>
           <div className="w-2 h-2 bg-cyber-primary/20 rounded-full animate-pulse"></div>
         </div>
       </div>
@@ -702,12 +703,12 @@ export const WorkflowChainOverlay = ({ events, isOpen, onClose }) => {
       ></div>
 
       {/* Content Container */}
-      <div className="relative w-full max-w-2xl bg-[#0a120d] border border-[#c5f82a]/30 shadow-[0_0_100px_rgba(197,248,42,0.15)] rounded-none overflow-hidden animate-scale-up">
+      <div className="relative w-full max-w-2xl bg-[#0a120d] border border-[#c5f82a]/30 shadow-[0_0_100px_rgba(197,248,42,0.15)] rounded-2xl overflow-hidden animate-scale-up">
         {/* Frame Corners */}
-        <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[#c5f82a] z-50"></div>
-        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[#c5f82a] z-50"></div>
-        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[#c5f82a] z-50"></div>
-        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-[#c5f82a] z-50"></div>
+        <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[#c5f82a] z-50 rounded-tl-2xl"></div>
+        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[#c5f82a] z-50 rounded-tr-2xl"></div>
+        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[#c5f82a] z-50 rounded-bl-2xl"></div>
+        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-[#c5f82a] z-50 rounded-br-2xl"></div>
         
         <DecisionTimeline events={events} onClose={onClose} />
       </div>

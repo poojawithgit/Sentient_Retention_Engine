@@ -21,7 +21,7 @@ export const Pipeline = () => {
             Four stages, <span className="italic-serif text-iris">one</span> autonomous loop.
           </h2>
         </div>
-        <a href="#capabilities" data-cursor className="font-mono text-xs uppercase tracking-[0.2em] underline underline-offset-8 hover:text-iris transition-colors">
+        <a href="#capabilities" data-cursor className="font-mono text-xs uppercase tracking-[0.2em] underline underline-offset-8 hover:text-iris transition-colors" aria-label="Explore the Sentient Retention Engine architecture">
           See architecture →
         </a>
       </div>
