@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Lock, User, ShieldAlert, Activity, ArrowRight, Fingerprint, Terminal } from 'lucide-react';
-import { BrandLogo, HeroBranding } from '../components/dashboard/DashboardComponents';
+import { BrandLogo } from '../components/dashboard/DashboardComponents';
 import config from '../config';
 
 const AdminLoginPage = () => {
@@ -9,7 +9,6 @@ const AdminLoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isAuthorized, setIsAuthorized] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -43,10 +42,7 @@ const AdminLoginPage = () => {
         localStorage.setItem('sre_token', data.token);
         localStorage.setItem('sre_user', JSON.stringify({ ...data.user, role: 'admin' })); // Force admin role for this portal demo
         
-        setIsAuthorized(true);
-        setTimeout(() => {
-          navigate('/admin/management' + (caseId ? `?claim=${caseId}` : ''));
-        }, 800);
+        navigate('/admin/management' + (caseId ? `?claim=${caseId}` : ''));
       } else {
         setError(data.message || 'Invalid Admin Credentials');
       }
@@ -57,19 +53,6 @@ const AdminLoginPage = () => {
     }
   };
 
-  if (isAuthorized) {
-    return (
-      <div className="min-h-screen bg-[#050805] flex flex-col items-center justify-center p-6 font-sans">
-        <div className="w-24 h-24 bg-[#c5f82a]/10 rounded-full flex items-center justify-center mb-8 relative">
-          <div className="absolute inset-0 rounded-full border-2 border-[#c5f82a] animate-ping opacity-20"></div>
-          <ShieldAlert size={48} className="text-[#c5f82a] animate-pulse" />
-        </div>
-        <h2 className="text-[#c5f82a] text-xl font-bold tracking-widest uppercase mb-2">Access Granted</h2>
-        <p className="text-gray-500 font-mono text-[10px] animate-pulse">Initializing Command Dashboard...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-[#050805] flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden">
       {/* Background HUD elements */}
@@ -77,18 +60,13 @@ const AdminLoginPage = () => {
       <div className="hud-scanline"></div>
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#c5f82a]/5 rounded-full blur-[120px] pointer-events-none"></div>
       
-      <div className="w-full max-w-5xl flex flex-col lg:flex-row items-center gap-12 lg:gap-20 relative animate-in fade-in zoom-in-95 duration-700">
+      <div className="w-full max-w-xl relative animate-in fade-in zoom-in-95 duration-700">
         
-        {/* Left Side: Detailed Branding */}
-        <div className="flex-1 hidden lg:block animate-in slide-in-from-left-8 duration-1000">
-          <HeroBranding />
-        </div>
-
-        {/* Right Side: Login Card */}
-        <div className="w-full max-w-md relative">
-          {/* Mobile Hero Branding (Visible only on small screens) */}
-          <div className="lg:hidden mb-16 animate-in slide-in-from-top-4 duration-700">
-            <HeroBranding />
+        {/* Login Card */}
+        <div className="w-full relative">
+          {/* Mobile Branding */}
+          <div className="mb-10 flex justify-center animate-in slide-in-from-top-4 duration-700">
+            <BrandLogo />
           </div>
 
           {/* Security Badge */}
@@ -98,7 +76,7 @@ const AdminLoginPage = () => {
               </div>
           </div>
 
-          <div className="bg-[#0f1712]/90 backdrop-blur-3xl border border-[#1a281e] rounded-[32px] p-10 shadow-[0_40px_100px_rgba(0,0,0,0.6)] relative overflow-hidden">
+          <div className="bg-[#0f1712]/90 backdrop-blur-3xl border border-[#1a281e] rounded-[40px] p-14 shadow-[0_40px_100px_rgba(0,0,0,0.6)] relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-[0.03] pointer-events-none">
               <Terminal size={120} className="text-white" />
             </div>

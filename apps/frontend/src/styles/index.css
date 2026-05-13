@@ -84,10 +84,10 @@
     text-shadow: 0 0 20px rgba(197, 248, 42, 0.05);
   }
 
-  h1 { font-size: clamp(3rem, 10vw, 5rem); }
-  h2 { font-size: clamp(2.25rem, 7vw, 3.75rem); }
-  h3 { font-size: clamp(1.75rem, 5vw, 2.5rem); }
-  h4 { font-size: clamp(1.25rem, 3vw, 1.5rem); letter-spacing: 0.08em; }
+  h1 { font-size: clamp(2.5rem, 8vw, 4rem); }
+  h2 { font-size: clamp(2rem, 6vw, 3rem); }
+  h3 { font-size: clamp(1.5rem, 4vw, 2rem); }
+  h4 { font-size: clamp(1.1rem, 2.5vw, 1.3rem); letter-spacing: 0.08em; }
 
   p, .font-sans { 
     font-family: 'Inter', sans-serif;

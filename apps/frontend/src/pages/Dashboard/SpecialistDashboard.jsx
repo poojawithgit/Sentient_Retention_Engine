@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, AlertOctagon, User, Phone, Mail, MessageSquare, CheckCircle, Clock, TrendingDown, Send, FileText, ArrowLeft, Zap, Shield, Activity, ShieldAlert, Scale, FileSearch, Gavel } from 'lucide-react';
-import apiClient from '../services/apiClient';
+import apiClient from '../../services/apiClient';
 
 // ─── Timeline Event ───────────────────────────────────────────────────────────
 const TimelineEvent = ({ icon: Icon, color, title, time, detail }) => (
@@ -170,9 +170,9 @@ const SpecialistDashboard = ({ escalation, onClose, onResolved }) => {
       <div className="relative z-10 flex w-full h-full overflow-hidden">
 
         {/* ──────────────── LEFT PANEL: Customer Context ──────────────── */}
-        <div className="w-80 shrink-0 border-r border-[#1a281e] flex flex-col bg-[#060c08]/80 backdrop-blur-xl">
+        <div className="w-72 shrink-0 border-r-2 border-cyber-primary/10 flex flex-col bg-[#050a06] backdrop-blur-2xl">
           {/* Header */}
-          <div className="p-6 border-b border-[#1a281e]">
+          <div className="p-5 border-b border-[#1a281e]">
             <button 
               onClick={onClose} 
               aria-label="Back to escalation queue"
@@ -235,7 +235,7 @@ const SpecialistDashboard = ({ escalation, onClose, onResolved }) => {
           </div>
 
           {/* Offers Tried */}
-          <div className="p-6">
+          <div className="p-5">
             <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3">Offers Attempted by AI</div>
             <div className="text-[11px] text-gray-400 bg-[#0a1a0f]/50 border border-[#1a281e] rounded-lg p-3 font-mono">
               {escalation.offers || 'No automated offers succeeded'}
@@ -247,7 +247,7 @@ const SpecialistDashboard = ({ escalation, onClose, onResolved }) => {
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
           {/* Top Bar */}
-          <div className="flex items-center justify-between p-6 border-b border-[#1a281e] shrink-0">
+          <div className="flex items-center justify-between px-8 py-6 border-b border-[#1a281e] shrink-0 bg-[#040805]">
             <div>
               <div className="text-[11px] text-[#c5f82a] font-bold uppercase tracking-[0.2em] mb-1 font-sans">Specialist Command Center</div>
               <h2 className="text-3xl font-bold text-white font-display tracking-tight">Retention Intervention</h2>
@@ -274,7 +274,7 @@ const SpecialistDashboard = ({ escalation, onClose, onResolved }) => {
           </div>
 
           {/* Content: Actions + Notes */}
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8">
 
             {/* Action Grid */}
             <div>
@@ -438,11 +438,11 @@ const SpecialistDashboard = ({ escalation, onClose, onResolved }) => {
         </div>
 
         {/* ──────────────── RIGHT PANEL: Timeline ──────────────── */}
-        <div className="w-72 shrink-0 border-l border-[#1a281e] bg-[#060c08]/80 backdrop-blur-xl flex flex-col">
-          <div className="p-6 border-b border-[#1a281e]">
+        <div className="w-64 shrink-0 border-l-2 border-cyber-primary/10 bg-[#050a06] backdrop-blur-2xl flex flex-col">
+          <div className="p-5 border-b border-[#1a281e]">
             <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Case Timeline</div>
           </div>
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-5">
             <div>
               {timeline.map((ev, i) => (
                 <TimelineEvent key={i} {...ev} />

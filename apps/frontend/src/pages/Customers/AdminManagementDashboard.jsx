@@ -6,11 +6,11 @@ import {
   List, Activity, ArrowRight, UserCheck, MessageSquare, ArrowLeft,
   Bell, Settings, HelpCircle, LogOut, Plus
 } from 'lucide-react';
-import { useDashboardData } from '../hooks/useDashboardData';
-import SpecialistDashboard from './SpecialistDashboard';
-import { BrandLogo } from '../components/dashboard/DashboardComponents';
-import config from '../config';
-import apiClient from '../services/apiClient';
+import { useDashboardData } from '../../hooks/useDashboardData';
+import SpecialistDashboard from '../Dashboard/SpecialistDashboard';
+import { BrandLogo } from '../../components/dashboard/DashboardComponents';
+import config from '../../config';
+import apiClient from '../../services/apiClient';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const AdminManagementDashboard = () => {

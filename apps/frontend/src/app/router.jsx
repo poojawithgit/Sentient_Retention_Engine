@@ -1,13 +1,12 @@
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import Dashboard from '../pages/Dashboard';
+import Dashboard from '../pages/Dashboard/Dashboard';
 import LandingPage from '../pages/LandingPage';
 import LoginPage from '../pages/LoginPage';
 import SignupPage from '../pages/SignupPage';
-import AdminLoginPage from '../pages/AdminLoginPage';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
-import AdminManagementDashboard from '../pages/AdminManagementDashboard';
+import AdminManagementDashboard from '../pages/Customers/AdminManagementDashboard';
 
 const PageTransition = ({ children }) => (
   <motion.div
@@ -30,7 +29,7 @@ const AppRouter = () => {
         <Route path="/" element={<PageTransition><LandingPage /></PageTransition>} />
         <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
         <Route path="/signup" element={<PageTransition><SignupPage /></PageTransition>} />
-        <Route path="/admin/login" element={<PageTransition><AdminLoginPage /></PageTransition>} />
+        <Route path="/admin/login" element={<PageTransition><LoginPage /></PageTransition>} />
         <Route 
           path="/dashboard" 
           element={

@@ -8,13 +8,14 @@ import {
 } from 'lucide-react';
 
 import SpecialistDashboard from './SpecialistDashboard';
-import { useDashboardData } from '../hooks/useDashboardData';
-import LiveAnalyticsSection from '../components/dashboard/LiveAnalyticsSection';
+import { useDashboardData } from '../../hooks/useDashboardData';
+import LiveAnalyticsSection from '../../components/dashboard/LiveAnalyticsSection';
+import { AIReasoningPanel } from '../../components/dashboard/AIReasoningPanel';
 import {
   KPICard, DonutChart, BarChart, Heatmap, ModelCard, FeatureImportance,
   EscalationCard, EscalationDetailsModal, ChainOfThoughtTerminal, AuditLogTable,
-  ActivityKPICard, LiveEventCard, WorkflowChainOverlay, CompactAestheticBranding
-} from '../components/dashboard/DashboardComponents';
+  ActivityKPICard, LiveEventCard, WorkflowChainOverlay, BrandLogo
+} from '../../components/dashboard/DashboardComponents';
 
 const Dashboard = ({ isAdminView = false }) => {
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ const Dashboard = ({ isAdminView = false }) => {
   const [isPaused, setIsPaused] = useState(false);
   const [selectedChainId, setSelectedChainId] = useState(null);
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
+  const [aiReasoningEntity, setAiReasoningEntity] = useState(null);
 
   const containerRef = useRef();
   const graphRef = useRef();
@@ -107,6 +109,8 @@ const Dashboard = ({ isAdminView = false }) => {
     setSelectedChainId(chainId);
     setIsTimelineOpen(true);
   };
+
+  const openAIReasoning = (entity) => setAiReasoningEntity(entity);
 
   const exportToCSV = (data, filename) => {
     if (!data || !data.length) {
@@ -299,11 +303,12 @@ const Dashboard = ({ isAdminView = false }) => {
       <div className="absolute inset-0 bg-[#050505]/95 pointer-events-none" />
       
       <div className={`flex w-full h-full relative z-10 transition-all duration-500 ${isFullView ? 'p-0' : 'p-4 md:p-6 lg:p-8'}`}>
-        <div className="w-20 flex flex-col items-center pt-4 shrink-0 animate-in fade-in slide-in-from-left-4 duration-500 border-r border-cyber-border bg-cyber-black z-20">
-          <Link to="/" className="mb-10 hover:opacity-80 transition-opacity">
-            <CompactAestheticBranding />
+        <div className="w-24 flex flex-col items-center pt-8 shrink-0 animate-in fade-in slide-in-from-left-4 duration-500 border-r-2 border-cyber-primary/20 bg-[#080808] z-20 shadow-[8px_0_32px_rgba(0,0,0,0.8)] relative">
+          <div className="absolute inset-y-0 right-0 w-[1px] bg-cyber-primary/5" />
+          <Link to="/" className="mb-14 hover:opacity-80 transition-opacity">
+            <BrandLogo isSidebar={true} />
           </Link>
-          <div className="flex flex-col gap-6 items-center">
+          <div className="flex flex-col gap-8 items-center">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -311,12 +316,12 @@ const Dashboard = ({ isAdminView = false }) => {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`flex flex-col items-center gap-1.5 transition-all group ${isActive ? 'text-cyber-primary' : 'text-zinc-600 hover:text-zinc-400'}`}
+                  className={`flex flex-col items-center gap-2 transition-all group ${isActive ? 'text-cyber-primary' : 'text-zinc-600 hover:text-zinc-400'}`}
                 >
-                  <div className={`w-10 h-10 flex items-center justify-center transition-all border ${isActive ? 'bg-cyber-primary text-cyber-black border-cyber-primary shadow-[0_0_15px_rgba(197,248,42,0.3)]' : 'bg-transparent border-zinc-800 group-hover:border-zinc-600'}`}>
-                    <Icon size={18} />
+                  <div className={`w-12 h-12 flex items-center justify-center transition-all border ${isActive ? 'bg-cyber-primary text-cyber-black border-cyber-primary shadow-[0_0_20px_rgba(197,248,42,0.4)]' : 'bg-transparent border-zinc-800 group-hover:border-zinc-600'}`}>
+                    <Icon size={20} />
                   </div>
-                  <span className="text-[7px] uppercase font-black tracking-[0.2em] font-display">{item.name}</span>
+                  <span className="text-[8px] uppercase font-black tracking-[0.2em] font-display">{item.name}</span>
                 </button>
               );
             })}
@@ -364,7 +369,7 @@ const Dashboard = ({ isAdminView = false }) => {
           </div>
         </div>
         
-        <div className={`flex-1 flex flex-col min-w-0 ${isFullView ? 'pl-0' : 'pl-2'}`}>
+        <div className={`flex-1 flex flex-col min-w-0 ${isFullView ? 'pl-6' : 'pl-10 lg:pl-12'}`}>
           {activeTab === 'Activity' && (
             <div className="flex flex-col h-full bg-cyber-black border border-cyber-border p-6 shadow-2xl relative overflow-hidden">
               <div className="grid grid-cols-4 gap-6 shrink-0 mb-6">
@@ -374,8 +379,8 @@ const Dashboard = ({ isAdminView = false }) => {
                 <ActivityKPICard title="ACTIVE CUSTOMERS" value={(kpis?.active_users || 0).toLocaleString()} hasTrend={false} />
               </div>
 
-              <div className="flex gap-6 flex-1 min-h-0">
-                <div className="w-7/12 flex flex-col h-full bg-cyber-surface border border-cyber-border p-5 relative shadow-brutalist">
+              <div className="flex gap-8 flex-1 min-h-0">
+                <div className="w-[60%] flex flex-col h-full bg-cyber-surface border border-cyber-border p-5 relative shadow-brutalist">
                   <div className="flex justify-between items-start mb-6 shrink-0">
                     <div>
                       <h2 className="text-xl font-black text-white uppercase tracking-tighter font-display">Agent Activity Stream</h2>
@@ -434,7 +439,7 @@ const Dashboard = ({ isAdminView = false }) => {
                   </div>
                 </div>
 
-                <div className="w-5/12 flex flex-col h-full bg-cyber-surface border border-cyber-border p-5 shadow-brutalist">
+                <div className="w-[40%] flex flex-col h-full bg-cyber-surface border border-cyber-border p-5 shadow-brutalist">
                   <h2 className="text-xl font-black text-white uppercase tracking-tighter font-display mb-6 shrink-0">Pipeline Live View</h2>
                   <div className="flex-1 relative overflow-hidden bg-cyber-black border border-cyber-border shadow-inner flex items-center justify-center">
                     <div className="absolute inset-0" ref={activityContainerRef}>
@@ -500,7 +505,7 @@ const Dashboard = ({ isAdminView = false }) => {
                 </div>
                 
                 {selectedNode && (
-                  <div className="absolute top-6 right-6 w-80 bg-[#121c16]/95 backdrop-blur-2xl border border-[#233529] rounded-2xl flex flex-col text-gray-300 shadow-2xl overflow-hidden z-10 animate-in slide-in-from-right-8 duration-300 max-h-[80%]">
+                  <div className="absolute top-6 right-6 w-72 bg-[#0d140f]/98 backdrop-blur-3xl border border-cyber-primary/20 rounded-2xl flex flex-col text-gray-300 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden z-10 animate-in slide-in-from-right-8 duration-300 max-h-[85%]">
                     <div className="p-5 flex-1 overflow-y-auto custom-scrollbar">
                       <div className="flex justify-between items-center mb-6">
                         <h2 className="text-lg font-bold text-white font-display uppercase tracking-tight">Node Details</h2>
@@ -827,8 +832,8 @@ const Dashboard = ({ isAdminView = false }) => {
                   />
                 </div>
               </div>
-              <div className="flex gap-8 flex-1 min-h-0">
-                <div className="w-5/12 flex flex-col h-full">
+              <div className="flex gap-10 flex-1 min-h-0">
+                <div className="w-[35%] flex flex-col h-full">
                   <div className="mb-6 shrink-0">
                     <form onSubmit={e => { e.preventDefault(); handleManualSearch(searchId, setSelectedEscalation); }} className="relative group">
                       <input type="text" value={searchId} onChange={e => setSearchId(e.target.value)} placeholder="Manual Search (Customer ID)..." className="w-full bg-[#0f1712]/50 border border-[#1a281e] rounded-xl py-3 pl-11 pr-4 text-xs text-gray-200 placeholder-gray-600 focus:outline-none focus:border-[#c5f82a]/40 focus:bg-[#0f1712]/80 transition-all shadow-inner" />
@@ -840,7 +845,15 @@ const Dashboard = ({ isAdminView = false }) => {
                   <div className="text-sm font-bold text-gray-200 mb-4 uppercase tracking-widest">Active Escalations</div>
                   <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
                     {filteredEscalations.length > 0 ? filteredEscalations.map(esc => (
-                      <EscalationCard key={esc.id} {...esc} onViewDetails={() => setSelectedEscalation(esc)} onTakeOwnership={handleClaim} />
+                      <div key={esc.id} className="relative group/esc">
+                        <EscalationCard {...esc} onViewDetails={() => setSelectedEscalation(esc)} onTakeOwnership={handleClaim} />
+                        <button
+                          onClick={() => openAIReasoning({ ...esc, score: esc.churnRisk ?? 0.78 })}
+                          className="absolute top-3 right-3 opacity-0 group-hover/esc:opacity-100 transition-opacity z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-cyber-primary/10 border border-cyber-primary/30 text-cyber-primary text-[9px] font-mono font-bold uppercase tracking-widest hover:bg-cyber-primary/20"
+                        >
+                          <span>AI Reasoning</span>
+                        </button>
+                      </div>
                     )) : (
                       <div className="h-full flex flex-col items-center justify-center text-gray-600 gap-4 opacity-50">
                         <Activity size={48} />
@@ -873,7 +886,7 @@ const Dashboard = ({ isAdminView = false }) => {
                   )}
                 </div>
 
-                <div className="w-7/12 flex flex-col h-full">
+                <div className="w-[65%] flex flex-col h-full">
                   <div className="flex items-center gap-2 mb-4 uppercase tracking-widest"><span className="text-sm font-bold text-gray-200">Chain of Thought Stream</span><span className="text-gray-600">//</span><span className="text-xs font-bold text-[#c5f82a] drop-shadow-[0_0_5px_rgba(197,248,42,0.5)]">LIVE</span></div>
                   <ChainOfThoughtTerminal logs={terminalText} />
                   
@@ -926,6 +939,12 @@ const Dashboard = ({ isAdminView = false }) => {
         onClose={() => setIsTimelineOpen(false)} 
         events={chainEvents} 
         activeChainId={selectedChainId}
+      />
+
+      <AIReasoningPanel
+        entity={aiReasoningEntity}
+        onClose={() => setAiReasoningEntity(null)}
+        triggerLabel={aiReasoningEntity?.reason || 'Churn Decision'}
       />
 
         {activeSpecialistCase && (

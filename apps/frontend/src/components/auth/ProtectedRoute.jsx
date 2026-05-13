@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children }) => {
   const is_admin_path = window.location.pathname.startsWith('/admin');
   
   if (!token) {
-    return <Navigate to={is_admin_path ? "/admin/login" : "/login"} replace={true} />;
+    return <Navigate to="/login" replace={true} />;
   }
   
   return children;
