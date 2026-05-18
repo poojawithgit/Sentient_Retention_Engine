@@ -4,7 +4,7 @@ import {
   Users, AlertCircle, Shield, ChevronRight, Search, Filter, 
   RefreshCcw, CheckCircle, Clock, MoreVertical, LayoutGrid, 
   List, Activity, ArrowRight, UserCheck, MessageSquare, ArrowLeft,
-  Bell, Settings, HelpCircle, LogOut, Plus
+  Bell, Settings, HelpCircle, LogOut, Plus, Gavel, History, ShieldAlert
 } from 'lucide-react';
 import { useDashboardData } from '../../hooks/useDashboardData';
 import SpecialistDashboard from '../Dashboard/SpecialistDashboard';
@@ -12,6 +12,7 @@ import { BrandLogo } from '../../components/dashboard/DashboardComponents';
 import config from '../../config';
 import apiClient from '../../services/apiClient';
 import { useNavigate, useLocation } from 'react-router-dom';
+import GovernanceView from './GovernanceView';
 
 const AdminManagementDashboard = () => {
   const navigate = useNavigate();
@@ -33,10 +34,17 @@ const AdminManagementDashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [viewMode, setViewMode] = useState('list'); // 'grid' or 'list'
-  const [activeSubTab, setActiveSubTab] = useState('ops'); // 'ops', 'team', 'health', 'logs', 'settings'
+  const [activeSubTab, setActiveSubTab] = useState('ops'); // 'ops', 'team', 'health', 'logs', 'settings', 'governance'
   const [notification, setNotification] = useState(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  // Governance State
+  const [approvalRequests, setApprovalRequests] = useState([]);
+  const [governanceLogs, setGovernanceLogs] = useState([]);
+  const [agentScopes, setAgentScopes] = useState({});
+  const [isGovLoading, setIsGovLoading] = useState(false);
+  const [govView, setGovView] = useState('approvals'); // 'approvals', 'logs', 'policies'
 
   const user = JSON.parse(localStorage.getItem('sre_user') || '{}');
 
@@ -88,17 +96,71 @@ const AdminManagementDashboard = () => {
     }
   };
 
+  const fetchGovernanceData = async () => {
+    setIsGovLoading(true);
+    try {
+      const [approvalsRes, logsRes, policiesRes, trustRes, scopesRes] = await Promise.all([
+        apiClient.get('/governance/approvals'),
+        apiClient.get('/governance/logs'),
+        apiClient.get('/governance/policies'),
+        apiClient.get('/governance/trust-levels'),
+        apiClient.get('/governance/agent-scopes')
+      ]);
+      setApprovalRequests(approvalsRes.data.approvals || []);
+      setGovernanceLogs(logsRes.data.logs || []);
+      setGovernancePolicies(policiesRes.data.policies || []);
+      setAgentTrustLevels(trustRes.data.trustLevels || []);
+      setAgentScopes(scopesRes.data || {});
+    } catch (err) {
+      console.error('Failed to fetch governance data:', err);
+    } finally {
+      setIsGovLoading(false);
+    }
+  };
+
+  const handleUpdateTrustLevel = async (agentId, trustLevel) => {
+    try {
+      await apiClient.post('/governance/trust-levels', {
+        agentId,
+        trustLevel
+      });
+      triggerAction(`Trust level for ${agentId} updated.`);
+      fetchGovernanceData();
+    } catch (err) {
+      console.error('Failed to update trust level:', err);
+      triggerAction('Failed to update trust level.');
+    }
+  };
+
+  const handleUpdateApproval = async (requestId, status, notes = '') => {
+    try {
+      await apiClient.post('/governance/approvals/status', {
+        requestId,
+        status,
+        reviewerId: user.id,
+        notes
+      });
+      triggerAction(`Action ${status === 'approved' ? 'authorized' : 'denied'} successfully.`);
+      fetchGovernanceData();
+    } catch (err) {
+      console.error('Failed to update approval status:', err);
+      triggerAction('Failed to process governance decision.');
+    }
+  };
+
   useEffect(() => {
     fetchEscalations();
     if (activeSubTab === 'team') fetchSpecialists();
     if (activeSubTab === 'logs') fetchAuditLogs();
     if (activeSubTab === 'health') fetchHealthData();
+    if (activeSubTab === 'governance') fetchGovernanceData();
     
     const interval = setInterval(() => {
       fetchEscalations();
       if (activeSubTab === 'team') fetchSpecialists();
       if (activeSubTab === 'logs') fetchAuditLogs();
       if (activeSubTab === 'health') fetchHealthData();
+      if (activeSubTab === 'governance') fetchGovernanceData();
     }, 10000);
     return () => clearInterval(interval);
   }, [activeSubTab]);
@@ -237,6 +299,12 @@ const AdminManagementDashboard = () => {
                 onClick={() => setActiveSubTab('logs')} 
               />
               <NavItem 
+                icon={Gavel} 
+                label="Governance Engine" 
+                active={activeSubTab === 'governance'} 
+                onClick={() => setActiveSubTab('governance')} 
+              />
+              <NavItem 
                 icon={Settings} 
                 label="Admin Settings" 
                 active={activeSubTab === 'settings'} 
@@ -315,12 +383,14 @@ const AdminManagementDashboard = () => {
               {activeSubTab === 'ops' ? 'Escalation Management' : 
                activeSubTab === 'team' ? 'Team Control' :
                activeSubTab === 'health' ? 'System Telemetry' : 
+               activeSubTab === 'governance' ? 'Governance Oversight' :
                activeSubTab === 'settings' ? 'Global Settings' : 'Security Audit'}
             </h1>
             <p className="text-[10px] text-white/40 mt-1 uppercase tracking-[0.15em] font-display font-medium">
               {activeSubTab === 'ops' ? 'Manual Intervention Pipeline' : 
                activeSubTab === 'team' ? 'Specialist Roster & Performance' :
                activeSubTab === 'health' ? 'Real-time Infrastructure Monitoring' : 
+               activeSubTab === 'governance' ? 'AI Agent Permissions & Authorization' :
                activeSubTab === 'settings' ? 'Environment Configuration & Rules' : 'Immutable Access Logs'}
             </p>
           </div>
@@ -699,6 +769,21 @@ const AdminManagementDashboard = () => {
                 </div>
               </div>
             )}
+            {activeSubTab === 'governance' && (
+              <GovernanceView 
+                view={govView}
+                setView={setGovView}
+                approvals={approvalRequests}
+                logs={governanceLogs}
+                policies={governancePolicies}
+                agentScopes={agentScopes}
+                trustLevels={agentTrustLevels}
+                isLoading={isGovLoading}
+                onAction={handleUpdateApproval}
+                onUpdateTrust={handleUpdateTrustLevel}
+              />
+            )}
+
             {activeSubTab === 'settings' && (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="grid grid-cols-2 gap-8">

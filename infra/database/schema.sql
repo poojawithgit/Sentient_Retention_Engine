@@ -106,3 +106,63 @@ CREATE TABLE IF NOT EXISTS raw_customer_churn (
     total_charges VARCHAR(25), -- Some values are empty strings in CSV
     churn VARCHAR(5)
 );
+
+-- Governance Policies (Dynamic)
+CREATE TABLE IF NOT EXISTS governance_policies (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    policy_name VARCHAR(100) UNIQUE NOT NULL,
+    policy_type VARCHAR(50) NOT NULL, -- THRESHOLD, PERMISSION, RISK
+    policy_value JSONB NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Governance Audit Logs
+CREATE TABLE IF NOT EXISTS governance_audit_logs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    agent_id VARCHAR(100) NOT NULL,
+    action_attempted VARCHAR(100) NOT NULL,
+    risk_score FLOAT NOT NULL,
+    status VARCHAR(20) NOT NULL, -- ALLOWED, DENIED, PAUSED
+    reason TEXT,
+    metadata JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Approval Chain Items
+CREATE TABLE IF NOT EXISTS approval_requests (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    customer_id VARCHAR(255) NOT NULL,
+    agent_id VARCHAR(100) NOT NULL,
+    action_requested VARCHAR(100) NOT NULL,
+    risk_score FLOAT NOT NULL,
+    status VARCHAR(20) DEFAULT 'pending', -- PENDING, APPROVED, REJECTED
+    request_payload JSONB,
+    specialist_id UUID,
+    specialist_notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES users(user_id)
+);
+
+-- Agent Trust Levels
+CREATE TABLE IF NOT EXISTS agent_trust_levels (
+    agent_id VARCHAR(100) PRIMARY KEY,
+    trust_level FLOAT DEFAULT 0.5,
+    is_active BOOLEAN DEFAULT TRUE,
+    last_audit TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Seed initial trust levels
+INSERT INTO agent_trust_levels (agent_id, trust_level, is_active) VALUES
+    ('RiskAnalysisAgent', 0.95, TRUE),
+    ('StrategyPlanningAgent', 0.90, TRUE),
+    ('SimulationAgent', 0.85, TRUE),
+    ('DecisionAgent', 0.80, TRUE),
+    ('GovernanceEngine', 1.0, TRUE),
+    ('ActionExecutionAgent', 0.90, TRUE),
+    ('HumanHandoffAgent', 1.0, TRUE),
+    ('FeedbackLearningAgent', 0.95, TRUE)
+ON CONFLICT (agent_id) DO UPDATE SET trust_level = EXCLUDED.trust_level;

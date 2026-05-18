@@ -139,7 +139,7 @@
     background-size: 200% 100%;
     animation: iris-shift 8s ease-in-out infinite;
   }
-  .italic-serif { font-family: 'Outfit', sans-serif; font-style: normal; font-weight: 500; }
+  .italic-serif { font-family: 'Inter', sans-serif; font-style: normal; font-weight: 500; }
   .border-faint { border-color: hsl(0 0% 100% / 0.08); }
   
   .glass-card {
@@ -349,3 +349,5 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #2a4230;
 }
+
+/* aria-label label placeholder */

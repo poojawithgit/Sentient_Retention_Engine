@@ -3,6 +3,52 @@ const config = require('../config');
 const { logger } = require('../utils/logger');
 const { AppError } = require('../utils/errors');
 
+// Agent Permission Scopes - Tool-Level + Impact-Level
+const AGENT_PERMISSIONS = {
+  'RiskAnalysisAgent': {
+    allowed: ['ANALYZE_RISK', 'FETCH_CUSTOMER_DATA'],
+    blocked: ['EXECUTE_DISCOUNT', 'MODIFY_CONTRACTS'],
+    thresholds: {}
+  },
+  'StrategyPlanningAgent': {
+    allowed: ['GENERATE_STRATEGIES', 'EVALUATE_ROI'],
+    blocked: ['EXECUTE_DISCOUNT'],
+    thresholds: {}
+  },
+  'SimulationAgent': {
+    allowed: ['RUN_SIMULATIONS', 'ANALYZE_SCENARIOS'],
+    blocked: ['EXECUTE_DISCOUNTS', 'TRIGGER_CRM_ACTIONS'],
+    thresholds: {}
+  },
+  'DecisionAgent': {
+    allowed: ['RANK_STRATEGIES', 'SELECT_OPTIMAL_PATH'],
+    blocked: ['EXECUTE_DISCOUNT'],
+    thresholds: {}
+  },
+  'ActionAgent': {
+    allowed: ['EXECUTE_APPROVED_RETENTION_WORKFLOWS', 'SEND_OFFERS'],
+    blocked: ['BYPASS_GOVERNANCE_VALIDATION'],
+    thresholds: {
+      'execute_approved_retention_workflows': { max_value: 500, requires_approval_for: ['ENTERPRISE'] }
+    }
+  },
+  'GovernanceEngine': {
+    allowed: ['VALIDATE_WORKFLOWS', 'BLOCK_UNSAFE_ACTIONS', 'TRIGGER_ESCALATION'],
+    blocked: [],
+    thresholds: {}
+  },
+  'HumanHandoffAgent': {
+    allowed: ['ESCALATE_CASE', 'CREATE_TASK'],
+    blocked: [],
+    thresholds: {}
+  },
+  'FeedbackLearningAgent': {
+    allowed: ['ANALYZE_FEEDBACK', 'UPDATE_MODEL_PARAMETERS'],
+    blocked: ['MODIFY_LIVE_POLICIES'],
+    thresholds: {}
+  }
+};
+
 class RetentionService {
   constructor(cache, repository) {
     this.cache = cache;
@@ -41,8 +87,83 @@ class RetentionService {
     }
   }
 
+  /**
+   * Hybrid Validation Layer: Tool-Level + Impact-Level
+   */
+  async validatePermission(agentName, action, metadata = {}) {
+    logger.info(`[GovernanceEngine] Hybrid Validation Request`, { agentName, action });
+
+    const policy = AGENT_PERMISSIONS[agentName];
+    if (!policy) {
+      await this.logSecurityEvent(agentName, action, 'DENIED', 'CRITICAL', 'Unknown agent policy');
+      return { allowed: false, status: 'DENIED', tier: 'CRITICAL', reason: 'Unknown agent policy' };
+    }
+
+    // 1. Tool Check
+    const isAllowed = policy.allowed.includes(action.toUpperCase());
+    const isBlocked = policy.blocked.includes(action.toUpperCase());
+
+    if (isBlocked) {
+      await this.logSecurityEvent(agentName, action, 'DENIED', 'CRITICAL', 'Explicitly Blocked');
+      return { allowed: false, status: 'DENIED', tier: 'CRITICAL', reason: 'Explicitly Blocked' };
+    }
+
+    if (!isAllowed) {
+      await this.logSecurityEvent(agentName, action, 'DENIED', 'MINOR', 'Unauthorized Action');
+      return { allowed: false, status: 'DENIED', tier: 'MINOR', reason: 'Unauthorized Action' };
+    }
+
+    // 2. Impact Check
+    const threshold = policy.thresholds[action.toLowerCase()];
+    if (threshold) {
+      if (metadata.amount && threshold.max_value && metadata.amount > threshold.max_value) {
+        await this.logSecurityEvent(agentName, action, 'PAUSED', 'MAJOR', `Impact limit exceeded ($${metadata.amount})`);
+        return { allowed: false, status: 'PAUSED', tier: 'MAJOR', reason: 'Financial threshold exceeded' };
+      }
+      
+      if (metadata.tier && threshold.requires_approval_for && threshold.requires_approval_for.includes(metadata.tier)) {
+        await this.logSecurityEvent(agentName, action, 'PAUSED', 'MAJOR', `Tier sensitivity protection (${metadata.tier})`);
+        return { allowed: false, status: 'PAUSED', tier: 'MAJOR', reason: 'High-tier customer sensitivity' };
+      }
+    }
+
+    return { allowed: true, status: 'ALLOWED' };
+  }
+
+  async logSecurityEvent(agentName, action, status, tier, reason, metadata = {}) {
+    logger.warn(`[GovernanceEngine] SECURITY_EVENT:${status}`, { agentName, action, tier, reason });
+
+    // Persist Trust Decay Event
+    const penaltyMap = { 'MINOR': 0.02, 'MAJOR': 0.05, 'CRITICAL': 0.15 };
+    if (status === 'DENIED') {
+      const penalty = penaltyMap[tier] || 0.05;
+      await this.repository.logTrustEvent(agentName, 'TRUST_DECAY', penalty, reason);
+    }
+
+    // Admin Audit
+    await this.repository.createAdminAuditLog({
+      action: `SECURITY_${status}`,
+      reason: `[${tier}] Agent: ${agentName} | Action: ${action} | Reason: ${reason}`,
+      admin_id: 'SYSTEM_GOVERNANCE'
+    });
+
+    if (this.broadcast) {
+      this.broadcast({
+        type: 'SECURITY_EVENT',
+        payload: { agent: agentName, action, status, tier, reason, timestamp: new Date() }
+      });
+    }
+  }
+
+
   async runAgent(userData) {
-    const { user_id, usage, complaints, payment_delay } = userData;
+    const { user_id, usage, complaints, payment_delay, agent_name = 'ActionAgent' } = userData;
+
+    // Enforcement Layer Check
+    const permission = await this.validatePermission(agent_name, 'EXECUTE_WORKFLOW');
+    if (!permission.allowed) {
+      throw new AppError(`Security Violation: ${permission.reason}`, 403);
+    }
 
     try {
       const response = await axios.post(`${config.services.agent}/agent`, {
@@ -75,6 +196,14 @@ class RetentionService {
   }
 
   async simulate(simulationData) {
+    const { agent_name = 'SimulationAgent' } = simulationData;
+
+    // Enforcement Layer Check
+    const permission = await this.validatePermission(agent_name, 'RUN_SIMULATION');
+    if (!permission.allowed) {
+      throw new AppError(`Security Violation: ${permission.reason}`, 403);
+    }
+
     try {
       const response = await axios.post(`${config.services.simulation}/simulate`, simulationData);
       return response.data;
@@ -239,6 +368,72 @@ class RetentionService {
 
   async getSystemHealth() {
     return await this.repository.getSystemHealth();
+  }
+
+  // --- Governance Engine Services ---
+
+  async getApprovalRequests() {
+    const requests = await this.repository.getApprovalRequests();
+    return { requests, count: requests.length };
+  }
+
+  async updateApprovalStatus(requestId, status, reviewerId, notes) {
+    const result = await this.repository.updateApprovalStatus(requestId, status, reviewerId, notes);
+    
+    // Log governance action
+    await this.repository.createAdminAuditLog({
+      action: `GOVERNANCE_${status}`,
+      reason: `Request ${requestId} ${status} by ${reviewerId}. Notes: ${notes}`,
+      admin_id: reviewerId
+    });
+
+    await this.cache.invalidatePattern('audit-logs:*');
+    return result;
+  }
+
+  async getGovernanceLogs(limit) {
+    const logs = await this.repository.getGovernanceLogs(limit);
+    return { logs, count: logs.length };
+  }
+
+  async getGovernancePolicies() {
+    const policies = await this.repository.getGovernancePolicies();
+    return { policies, count: policies.length };
+  }
+
+  async getAgentTrustLevels() {
+    const trustLevels = await this.repository.getAgentTrustLevels();
+    return { trustLevels, count: trustLevels.length };
+  }
+
+  async updateAgentTrustLevel(agentId, trustLevel) {
+    const result = await this.repository.updateAgentTrustLevel(agentId, trustLevel);
+    
+    // Log trust level change
+    await this.repository.createAdminAuditLog({
+      action: 'GOVERNANCE_TRUST_UPDATE',
+      reason: `Trust level for ${agentId} updated to ${trustLevel}`,
+      admin_id: 'SYSTEM_ADMIN' // Could be passed from request
+    });
+
+    return result;
+  }
+
+  async updateAgentStatus(agentId, isActive) {
+    const result = await this.repository.updateAgentStatus(agentId, isActive);
+    
+    // Log status change
+    await this.repository.createAdminAuditLog({
+      action: isActive ? 'GOVERNANCE_AGENT_RESTORED' : 'GOVERNANCE_AGENT_SUSPENDED',
+      reason: `Agent ${agentId} status updated to ${isActive ? 'Active' : 'Suspended'}`,
+      admin_id: 'SYSTEM_ADMIN'
+    });
+
+    return result;
+  }
+
+  async getAgentScopes() {
+    return AGENT_PERMISSIONS;
   }
 }
 

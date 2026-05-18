@@ -367,3 +367,6 @@ export const AIReasoningPanel = ({ entity, onClose, triggerLabel = 'Decision' })
 };
 
 export default AIReasoningPanel;
+
+// aria-label
+

@@ -53,6 +53,12 @@ class RetentionState(TypedDict):
     feedback_metrics: Optional[Dict[str, Any]]
     audit_log: List[Dict[str, Any]]
     
+    # 10. Governance & Security Enforcement
+    agent_trust_level: float
+    action_risk_score: float
+    approval_chain_status: str  # NONE, PENDING, APPROVED, REJECTED
+    governance_logs: List[Dict[str, Any]]
+    
     # Execution Metadata
     technical_failure: bool
     loop_count: int

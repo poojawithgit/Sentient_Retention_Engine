@@ -5,6 +5,7 @@ from ..llm_provider import get_llm
 from ..models import BusinessRuleCheck
 from .utils import emit_telemetry
 from ..database import create_retention_action, create_agent_memory
+from ..governance_engine import SecurityValidator, CompositeRiskModel
 
 llm, LLM_AVAILABLE = get_llm()
 
@@ -12,59 +13,53 @@ def node_governance(state: RetentionState) -> Dict[str, Any]:
     """
     [Agent 5: GovernanceEngine]
     Purpose: Validate selected strategy against confidence, ROI, business policy, and risk thresholds.
+    Enhanced with Security Enforcement Layer.
     """
     strategy = state.get("selected_strategy", {})
+    action_name = strategy.get("name", "UNKNOWN_ACTION")
     confidence = state.get("decision_confidence", 0)
     risk_level = state.get("risk_level", "MEDIUM")
-    plan_tier = state.get("plan_tier", "BASIC")
-    roi_estimate = strategy.get("roi_estimate", 0)
-    reasoning = state.get("decision_reasoning", "")
     
     emit_telemetry(state, "GovernanceEngine", "VALIDATION_STARTED", 
-                   f"Initiating validation layer for {strategy.get('name')} | Risk: {risk_level}")
+                   f"Initiating validation layer for {action_name} | Risk: {risk_level}")
+    
+    # 1. Advanced Risk Scoring (Composite Model)
+    # Using 'DecisionAgent' as the acting agent context for the decision node
+    risk_score = CompositeRiskModel.calculate_score(state, action_name, confidence, "DecisionAgent")
+    state["action_risk_score"] = risk_score
+    
+    # 2. Security & Permission Validation
+    validation = SecurityValidator.validate_action("DecisionAgent", action_name, state)
     
     violations = []
-    
-    # 1. Confidence Threshold Check
+    if validation["status"] == "DENIED":
+        violations.append(f"SECURITY_DENIAL: {validation['reason']}")
+    elif validation["status"] == "PAUSED":
+        violations.append(f"APPROVAL_REQUIRED: {validation['reason']}")
+
+    # 3. Legacy Policy Checks (ROI, Confidence)
     target_confidence = 0.90 if risk_level == "CRITICAL" else 0.80
     if confidence < target_confidence:
         violations.append(f"CONFIDENCE_UNDER_THRESHOLD: {confidence:.2f} < {target_confidence}")
     
-    # 2. ROI Constraint Check
-    # Business requirement: ROI must be at least 1.5x for CRITICAL retention actions
-    min_roi = 1.5 if risk_level == "CRITICAL" else 1.2
-    if roi_estimate < min_roi:
-        violations.append(f"ROI_CONSTRAINT_VIOLATION: {roi_estimate:.2f} < {min_roi}")
-        
-    # 3. Customer Sensitivity Detection
-    sensitivity = "HIGH" if (risk_level in ["CRITICAL", "HIGH"] or plan_tier == "ENTERPRISE") else "LOW"
+    passed = len(violations) == 0 and validation["status"] == "ALLOWED"
     
-    # 4. Hallucination Risk Assessment (Heuristic-based)
-    hallucination_risk = "LOW"
-    if len(reasoning) < 50:
-        hallucination_risk = "MEDIUM"
-        violations.append("HALLUCINATION_RISK: Reasoning depth insufficient.")
-    elif "test" in reasoning.lower() or "placeholder" in reasoning.lower():
-        hallucination_risk = "HIGH"
-        violations.append("HALLUCINATION_RISK: Detected non-deterministic/placeholder terminology.")
+    # Handle Approval Chain Trigger
+    approval_status = "NONE"
+    if validation["status"] == "PAUSED":
+        approval_status = "PENDING"
+        emit_telemetry(state, "GovernanceEngine", "APPROVAL_CHAIN_TRIGGERED", 
+                       f"Action {action_name} requires specialist review. Risk Score: {risk_score}")
 
-    # 5. Policy Compliance
-    if "Discount" in strategy.get("name", "") and plan_tier == "ENTERPRISE":
-        # Enterprise customers should get service-based retention, not generic discounts
-        violations.append("POLICY_VIOLATION: Direct discounts are deprecated for Enterprise Tier.")
-
-    passed = len(violations) == 0
-    
     validation_status = "VALIDATION_PASSED" if passed else "VALIDATION_FAILED"
-    message = "Governance Clearance Granted" if passed else f"Escalation Required: {violations[0]}"
+    message = "Governance Clearance Granted" if passed else f"Governance Constraint: {violations[0] if violations else 'Validation Failed'}"
     
-    # Enrich state with governance metrics for the dashboard
+    # Enrich metadata for the dashboard
     governance_metadata = {
         "confidence": f"{confidence*100:.1f}%",
-        "roi_status": "PASS" if roi_estimate >= min_roi else "FAIL",
-        "policy_compliance": "PASS" if not any("POLICY" in v for v in violations) else "FAIL",
-        "hallucination_risk": hallucination_risk,
-        "sensitivity": sensitivity,
+        "risk_score": risk_score,
+        "security_status": validation["status"],
+        "approval_status": approval_status,
         "violations": violations
     }
 
@@ -72,13 +67,14 @@ def node_governance(state: RetentionState) -> Dict[str, Any]:
 
     return {
         "validation_passed": passed,
+        "action_risk_score": risk_score,
+        "approval_chain_status": approval_status,
         "policy_violations": violations,
-        "roi_check": roi_estimate >= min_roi,
         "governance_report": {
-            "status": "APPROVED" if passed else "REJECTED",
+            "status": "APPROVED" if passed else "REJECTED_OR_PAUSED",
             "violations": violations,
             "timestamp": time.time(),
-            "reasoning": message,
+            "risk_score": risk_score,
             "metadata": governance_metadata
         },
         "agent_telemetry": state.get("agent_telemetry", [])

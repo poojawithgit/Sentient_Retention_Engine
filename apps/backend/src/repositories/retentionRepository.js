@@ -170,6 +170,87 @@ class RetentionRepository {
       uptime: '99.99%'
     };
   }
+
+  // --- Governance Engine Queries ---
+
+  async getApprovalRequests() {
+    const result = await db.query(
+      `SELECT id, customer_id as user_id, agent_id as acting_agent, action_requested as requested_action, risk_score, status, request_payload as metadata, created_at
+       FROM approval_requests
+       WHERE status = 'pending'
+       ORDER BY risk_score DESC, created_at DESC`
+    );
+    return result.rows;
+  }
+
+  async updateApprovalStatus(requestId, status, reviewerId, notes) {
+    const result = await db.query(
+      `UPDATE approval_requests 
+       SET status = $2, specialist_notes = $4, resolved_at = NOW()
+       WHERE id = $1
+       RETURNING *`,
+      [requestId, status, reviewerId, notes]
+    );
+    return result.rows[0];
+  }
+
+  async getGovernanceLogs(limit = 100) {
+    const result = await db.query(
+      `SELECT id, agent_id as acting_agent, action_attempted as action_name, risk_score, status as security_status, metadata, created_at
+       FROM governance_audit_logs
+       ORDER BY created_at DESC
+       LIMIT $1`,
+      [limit]
+    );
+    return result.rows;
+  }
+
+  async getGovernancePolicies() {
+    const result = await db.query(
+      `SELECT id, policy_name, policy_type, scope, constraint_value as limit, is_active
+       FROM governance_policies
+       WHERE is_active = true`
+    );
+    return result.rows;
+  }
+
+  async getAgentTrustLevels() {
+    const result = await db.query(
+      `SELECT agent_id, trust_level, is_active, last_audit, updated_at
+       FROM agent_trust_levels
+       ORDER BY trust_level DESC`
+    );
+    return result.rows;
+  }
+
+  async updateAgentTrustLevel(agent_id, trust_level) {
+    const result = await db.query(
+      `UPDATE agent_trust_levels 
+       SET trust_level = $2, updated_at = NOW()
+       WHERE agent_id = $1
+       RETURNING *`,
+      [agent_id, trust_level]
+    );
+    return result.rows[0];
+  }
+
+  async updateAgentStatus(agent_id, is_active) {
+    const result = await db.query(
+      `UPDATE agent_trust_levels 
+       SET is_active = $2, updated_at = NOW()
+       WHERE agent_id = $1
+       RETURNING *`,
+      [agent_id, is_active]
+    );
+    return result.rows[0];
+  }
+
+  async logTrustEvent(agent_id, event_type, score, reason) {
+    return await db.query(
+      'INSERT INTO agent_memory (user_id, action, result, reason) VALUES ($1, $2, $3, $4) RETURNING *',
+      [agent_id, event_type, `SCORE:${score}`, reason]
+    );
+  }
 }
 
 module.exports = RetentionRepository;

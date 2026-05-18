@@ -26,5 +26,15 @@ module.exports = (controller) => {
   router.get('/admin/specialists', auth.protect, auth.restrictTo('admin'), controller.getSpecialists);
   router.get('/admin/health', auth.protect, auth.restrictTo('admin'), controller.getSystemHealth);
   
+  // Governance routes
+  router.get('/governance/approvals', auth.protect, controller.getApprovalRequests);
+  router.post('/governance/approvals/status', auth.protect, auth.restrictTo('admin'), controller.updateApprovalStatus);
+  router.get('/governance/logs', auth.protect, auth.restrictTo('admin'), controller.getGovernanceLogs);
+  router.get('/governance/policies', auth.protect, controller.getGovernancePolicies);
+  router.get('/governance/trust-levels', auth.protect, controller.getAgentTrustLevels);
+  router.post('/governance/trust-levels', auth.protect, auth.restrictTo('admin'), controller.updateAgentTrustLevel);
+  router.get('/governance/agent-scopes', auth.protect, controller.getAgentScopes);
+  router.post('/governance/agent-status', auth.protect, auth.restrictTo('admin'), controller.updateAgentStatus);
+
   return router;
 };

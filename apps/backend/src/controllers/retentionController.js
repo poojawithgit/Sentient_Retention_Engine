@@ -23,6 +23,14 @@ class RetentionController {
     this.executeAction = catchAsync(this.executeAction.bind(this));
     this.addCaseNote = catchAsync(this.addCaseNote.bind(this));
     this.getSystemHealth = catchAsync(this.getSystemHealth.bind(this));
+    this.getApprovalRequests = catchAsync(this.getApprovalRequests.bind(this));
+    this.updateApprovalStatus = catchAsync(this.updateApprovalStatus.bind(this));
+    this.getGovernanceLogs = catchAsync(this.getGovernanceLogs.bind(this));
+    this.getGovernancePolicies = catchAsync(this.getGovernancePolicies.bind(this));
+    this.getAgentTrustLevels = catchAsync(this.getAgentTrustLevels.bind(this));
+    this.updateAgentTrustLevel = catchAsync(this.updateAgentTrustLevel.bind(this));
+    this.updateAgentStatus = catchAsync(this.updateAgentStatus.bind(this));
+    this.getAgentScopes = catchAsync(this.getAgentScopes.bind(this));
   }
 
   async predict(req, res) {
@@ -136,6 +144,69 @@ class RetentionController {
 
   async getSystemHealth(req, res) {
     const result = await this.retentionService.getSystemHealth();
+    res.json(result);
+  }
+
+  async getApprovalRequests(req, res) {
+    const result = await this.retentionService.getApprovalRequests();
+    res.json(result);
+  }
+
+  async updateApprovalStatus(req, res) {
+    const reviewerId = req.user.username;
+    const { requestId, status, notes } = req.body;
+    const result = await this.retentionService.updateApprovalStatus(requestId, status, reviewerId, notes);
+    
+    this.broadcast({
+      type: 'GOVERNANCE_UPDATE',
+      payload: { requestId, status, reviewerId }
+    });
+    
+    res.json(result);
+  }
+
+  async getGovernanceLogs(req, res) {
+    const limit = parseInt(req.query.limit) || 100;
+    const result = await this.retentionService.getGovernanceLogs(limit);
+    res.json(result);
+  }
+
+  async getGovernancePolicies(req, res) {
+    const result = await this.retentionService.getGovernancePolicies();
+    res.json(result);
+  }
+
+  async getAgentTrustLevels(req, res) {
+    const result = await this.retentionService.getAgentTrustLevels();
+    res.json(result);
+  }
+
+  async updateAgentTrustLevel(req, res) {
+    const { agentId, trustLevel } = req.body;
+    const result = await this.retentionService.updateAgentTrustLevel(agentId, trustLevel);
+    
+    this.broadcast({
+      type: 'GOVERNANCE_TRUST_UPDATE',
+      payload: { agentId, trustLevel }
+    });
+    
+    res.json(result);
+  }
+
+  async updateAgentStatus(req, res) {
+    const { agentId, isActive } = req.body;
+    const result = await this.retentionService.updateAgentStatus(agentId, isActive);
+    
+    this.broadcast({
+      type: 'GOVERNANCE_AGENT_STATUS_UPDATE',
+      payload: { agentId, isActive }
+    });
+    
+    res.json(result);
+  }
+
+  async getAgentScopes(req, res) {
+    const result = await this.retentionService.getAgentScopes();
     res.json(result);
   }
 }
