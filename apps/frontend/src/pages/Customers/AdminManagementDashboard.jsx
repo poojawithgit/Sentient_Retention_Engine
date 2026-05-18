@@ -45,6 +45,8 @@ const AdminManagementDashboard = () => {
   const [agentScopes, setAgentScopes] = useState({});
   const [isGovLoading, setIsGovLoading] = useState(false);
   const [govView, setGovView] = useState('approvals'); // 'approvals', 'logs', 'policies'
+  const [governancePolicies, setGovernancePolicies] = useState([]);
+  const [agentTrustLevels, setAgentTrustLevels] = useState([]);
 
   const user = JSON.parse(localStorage.getItem('sre_user') || '{}');
 
@@ -129,6 +131,20 @@ const AdminManagementDashboard = () => {
     } catch (err) {
       console.error('Failed to update trust level:', err);
       triggerAction('Failed to update trust level.');
+    }
+  };
+
+  const handleUpdateAgentStatus = async (agentId, isCurrentlyActive) => {
+    try {
+      await apiClient.post('/governance/agent-status', {
+        agentId,
+        isActive: !isCurrentlyActive
+      });
+      triggerAction(`Agent ${agentId} status updated successfully.`);
+      fetchGovernanceData();
+    } catch (err) {
+      console.error('Failed to update agent status:', err);
+      triggerAction('Failed to update agent status.');
     }
   };
 
@@ -781,6 +797,7 @@ const AdminManagementDashboard = () => {
                 isLoading={isGovLoading}
                 onAction={handleUpdateApproval}
                 onUpdateTrust={handleUpdateTrustLevel}
+                onUpdateStatus={handleUpdateAgentStatus}
               />
             )}
 

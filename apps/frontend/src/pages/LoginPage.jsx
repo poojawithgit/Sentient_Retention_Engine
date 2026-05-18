@@ -157,7 +157,7 @@ const LoginPage = () => {
               <BrandLogo hideText={true} />
             </div>
             <div className="text-center">
-              <h1 className="text-3xl font-display text-white tracking-[0.2em] uppercase font-bold">Sentient</h1>
+              <h2 className="text-3xl font-display text-white tracking-[0.2em] uppercase font-bold">Sentient</h2>
               <p className="text-[#c5f82a] font-mono text-[10px] tracking-[0.3em] uppercase opacity-70">Customer Preservation</p>
             </div>
           </div>

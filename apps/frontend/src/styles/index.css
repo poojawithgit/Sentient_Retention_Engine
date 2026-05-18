@@ -51,7 +51,7 @@
     --input: 0 0% 10%;
     --ring: 76 92% 57%;
 
-    --radius: 16px; /* SLIGHTLY MORE ROUNDED FOR PREMIUM FEEL */
+    --radius: 2px; /* SHARP GEOMETRY FOR BRUTALIST SOC HUD */
   }
 }
 

@@ -29,6 +29,15 @@ from pathlib import Path
 from typing import List, Dict, Optional
 from datetime import datetime
 
+# Windows encoding crash fix (reconfigure stdout/stderr to utf-8)
+try:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 # ANSI colors
 class Colors:
     HEADER = '\033[95m'

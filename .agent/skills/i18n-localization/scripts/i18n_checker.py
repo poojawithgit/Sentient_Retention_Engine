@@ -128,7 +128,7 @@ def flatten_keys(d, prefix=''):
             keys.add(new_key)
     return keys
 
-def check_hardcoded_strings(project_path: Path) -> dict:
+def check_hardcoded_strings(project_path: Path, has_locales: bool = True) -> dict:
     """Check for hardcoded strings in code files."""
     issues = []
     passed = []
@@ -188,7 +188,8 @@ def check_hardcoded_strings(project_path: Path) -> dict:
         passed.append(f"[OK] {files_with_i18n} files use i18n")
     
     if files_with_hardcoded > 0:
-        issues.append(f"[X] {files_with_hardcoded} files may have hardcoded strings")
+        prefix = "[X]" if has_locales else "[!]"
+        issues.append(f"{prefix} {files_with_hardcoded} files may have hardcoded strings")
         for ex in hardcoded_examples:
             issues.append(f"   → {ex}")
     else:
@@ -209,7 +210,7 @@ def main():
     locale_result = check_locale_completeness(locale_files)
     
     # Check hardcoded strings
-    code_result = check_hardcoded_strings(project_path)
+    code_result = check_hardcoded_strings(project_path, len(locale_files) > 0)
     
     # Print results
     print("[LOCALE FILES]")
