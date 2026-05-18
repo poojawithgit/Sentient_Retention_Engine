@@ -13,5 +13,10 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true,
+    allowedHosts: ['.replit.app', 'localhost', 'sentient-retention-engine--satyamraghuvan1.replit.app'],
+  },
+  preview: {
+    port: 3000,
+    allowedHosts: ['.replit.app', 'localhost', 'sentient-retention-engine--satyamraghuvan1.replit.app'],
   },
 })

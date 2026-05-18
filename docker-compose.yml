@@ -5,6 +5,7 @@ services:
   postgres:
     build:
       context: ./infra/database
+    image: ${REGISTRY_OWNER:-sentient-retention}/sentient-postgres:latest
     container_name: sentient-postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-sentient_db}
@@ -32,6 +33,7 @@ services:
   backend:
     build:
       context: ./backend
+    image: ${REGISTRY_OWNER:-sentient-retention}/sentient-backend:latest
     container_name: sentient-backend
     environment:
       PORT: ${BACKEND_PORT:-8000}
@@ -56,6 +58,7 @@ services:
   agentic-ai:
     build:
       context: ./agents
+    image: ${REGISTRY_OWNER:-sentient-retention}/sentient-agentic-ai:latest
     container_name: sentient-agentic-ai
     environment:
       DATABASE_URL: ${DATABASE_URL}
@@ -73,6 +76,7 @@ services:
   ml-service:
     build:
       context: ./simulation/ml-service
+    image: ${REGISTRY_OWNER:-sentient-retention}/sentient-ml-service:latest
     container_name: sentient-ml-service
     environment:
       PORT: ${ML_SERVICE_PORT:-8001}
@@ -88,6 +92,7 @@ services:
       context: ./frontend
       args:
         VITE_API_BASE_URL: /api/v1
+    image: ${REGISTRY_OWNER:-sentient-retention}/sentient-frontend:latest
     container_name: sentient-frontend
     ports:
       - "${FRONTEND_PORT:-3000}:80"
