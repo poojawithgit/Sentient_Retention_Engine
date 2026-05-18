@@ -49,13 +49,36 @@ class SecurityValidator:
     @staticmethod
     def validate_action(agent_id: str, action: str, state: RetentionState, payload: Dict[str, Any] = None) -> Dict[str, Any]:
         payload = payload or {}
-        # 1. Tool-Level Scope Check
-        policy = HARDCODED_POLICIES.get(agent_id, {})
-        if action in policy.get("blocked_actions", []):
-            return {"status": "DENIED", "tier": "CRITICAL", "reason": f"EXPLICIT_BLOCK: {action} forbidden."}
         
-        if policy.get("allowed_actions") and action not in policy["allowed_actions"]:
-            return {"status": "DENIED", "tier": "MINOR", "reason": f"SCOPE_VIOLATION: {action} not in allowed scope."}
+        # 1. Tool-Level Scope Check (Option B: Loose Auditing / Fail-Open)
+        policy = HARDCODED_POLICIES.get(agent_id)
+        if not policy:
+            # Unidentified Agent: allow with audit warning
+            return {
+                "status": "ALLOWED_WARN",
+                "tier": "MINOR",
+                "reason": f"UNIDENTIFIED_AGENT: Agent '{agent_id}' is not registered in security policies."
+            }
+
+        # If action is explicitly blocked -> Block it (Strict fail-closed for explicit blocks)
+        if action in policy.get("blocked_actions", []):
+            return {
+                "status": "DENIED",
+                "tier": "CRITICAL",
+                "reason": f"EXPLICIT_BLOCK: Action '{action}' is strictly forbidden for {agent_id}."
+            }
+        
+        # If action is allowed -> Granted
+        if policy.get("allowed_actions") is not None and action in policy.get("allowed_actions", []):
+            pass # Proceed to impact checks
+            
+        # If action is not listed -> Unidentified action -> Fail-Open with warning
+        elif policy.get("allowed_actions") is not None:
+            return {
+                "status": "ALLOWED_WARN",
+                "tier": "MINOR",
+                "reason": f"SCOPE_VIOLATION_WARN: Action '{action}' is outside allowed scope for {agent_id}."
+            }
 
         # 2. Impact-Level Check
         if action == "apply_discount":
@@ -99,14 +122,26 @@ def governance_protected(action_name: str):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(state: RetentionState, *args, **kwargs):
-            agent_id = state.get("active_agent", "UnknownAgent")
+            # Map action_name to appropriate agent if active_agent is not set
+            ACTION_TO_AGENT = {
+                "generate_strategies": "StrategyPlanningAgent",
+                "run_simulations": "SimulationAgent",
+                "select_optimal_path": "DecisionAgent",
+                "execute_approved_retention_workflows": "ActionAgent",
+                "send_offers": "ActionAgent",
+                "analyze_feedback": "FeedbackLearningAgent"
+            }
+            if not state.get("active_agent") or state.get("active_agent") == "UnknownAgent":
+                state["active_agent"] = ACTION_TO_AGENT.get(action_name, "UnknownAgent")
+                
+            agent_id = state["active_agent"]
             payload = kwargs.get("payload", {}) if kwargs.get("payload") else (args[0] if args else {})
             
             # 1. Permission Validation
             validation = SecurityValidator.validate_action(agent_id, action_name, state, payload)
             risk_score = CompositeRiskModel.calculate_score(state, action_name, state.get("decision_confidence", 0.5), agent_id)
             
-            # 2. Handle Violations
+            # 2. Handle Violations & Warnings
             if validation["status"] == "DENIED":
                 tier = validation["tier"]
                 new_trust = TrustManager.apply_penalty(agent_id, tier)
@@ -137,6 +172,21 @@ def governance_protected(action_name: str):
                 req_id = create_approval_request(state.get("customer_id"), agent_id, action_name, risk_score, payload)
                 state["status"] = "PENDING_APPROVAL"
                 return {"status": "PAUSED", "request_id": req_id}
+
+            if validation["status"] == "ALLOWED_WARN":
+                tier = validation["tier"]
+                event = {
+                    "type": "UNAUTHORIZED_ACTION_WARNING",
+                    "agent": agent_id,
+                    "action": action_name,
+                    "tier": tier,
+                    "reason": validation["reason"],
+                    "timestamp": time.time()
+                }
+                
+                # Create a security warning log in both the DB Audit log and Activity Stream
+                create_governance_audit_log(agent_id, action_name, risk_score, "ALLOWED_WARN", validation["reason"], event)
+                emit_telemetry(state, "GovernanceEngine", "SECURITY_WARNING", f"Warning: {validation['reason']}", event)
 
             # 3. Success Flow
             TrustManager.recover(agent_id)

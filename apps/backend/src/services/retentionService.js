@@ -80,6 +80,112 @@ class RetentionService {
       await this.cache.del('kpis');
       await this.cache.invalidatePattern('audit-logs:*');
 
+      // Automated pipeline execution trigger for High and Critical risks (Option A)
+      if (risk_level === 'High' || risk_level === 'Critical') {
+        // Fire-and-forget background execution to avoid blocking the fast prediction response
+        (async () => {
+          try {
+            // Deduplication Check
+            const activeAction = await this.repository.getActiveRetentionAction(user_id);
+            if (activeAction) {
+              logger.info(`Active retention action already exists for user ${user_id}. Skipping automatic trigger.`, {
+                user_id,
+                action_id: activeAction.id,
+                status: activeAction.status
+              });
+              return;
+            }
+
+            logger.info(`Automatically triggering retention pipeline for user ${user_id} due to ${risk_level} risk level.`);
+
+            const pipelineResponse = await axios.post(`${config.services.agenticAi}/api/run-pipeline`, {
+              userId: user_id,
+              plan_tier: userData.plan_tier || 'Gold',
+              usage_score: typeof usage === 'number' ? usage : 15.0,
+              complaints_count: typeof complaints === 'number' ? complaints : 0,
+              network_drops: typeof userData.network_drops === 'number' ? userData.network_drops : 0,
+              payment_status: userData.payment_status || 'Paid'
+            });
+
+            const pipelineData = pipelineResponse.data;
+            logger.info('Retention pipeline automated execution completed successfully', {
+              user_id,
+              pipelineData
+            });
+
+            // Broadcast real-time notifications to React dashboard
+            if (this.broadcast) {
+              if (pipelineData.escalated_to_human) {
+                this.broadcast({
+                  type: 'SPECIALIST_ESCALATION',
+                  payload: {
+                    user_id,
+                    risk_score: pipelineData.risk_score,
+                    risk_level: pipelineData.risk_level,
+                    reason: pipelineData.decision_reasoning,
+                    action_id: pipelineData.specialist_queue_id
+                  }
+                });
+              } else {
+                this.broadcast({
+                  type: 'AGENT_DECISION',
+                  payload: {
+                    user_id,
+                    risk_score: pipelineData.risk_score,
+                    risk_level: pipelineData.risk_level,
+                    selected_strategy: pipelineData.selected_strategy,
+                    final_action: pipelineData.final_action,
+                    reason: pipelineData.decision_reasoning
+                  }
+                });
+              }
+            }
+          } catch (pipelineError) {
+            logger.error('Error executing automated pipeline trigger', {
+              error: pipelineError.message,
+              user_id
+            });
+
+            try {
+              // Option A Graceful Degradation: Log FAILED_AUTO_TRIGGER in database
+              const failedAction = await this.repository.createRetentionAction(
+                user_id,
+                'FAILED_AUTO_TRIGGER',
+                'pending'
+              );
+
+              // Log systemic failure inside agent_memory
+              await this.repository.createAgentMemory({
+                user_id,
+                action: 'AUTO_TRIGGER_FAILURE',
+                result: 'error',
+                churn_risk: churn_risk,
+                expected_churn: churn_risk,
+                reason: `Failed to trigger LangGraph pipeline automatically. Error: ${pipelineError.message}. Manual recovery required.`
+              });
+
+              // Broadcast websocket notification for manual fallback trigger
+              if (this.broadcast) {
+                this.broadcast({
+                  type: 'PIPELINE_TRIGGER_FAILED',
+                  payload: {
+                    user_id,
+                    error: pipelineError.message,
+                    action_id: failedAction.id,
+                    message: `Pipeline failed to trigger automatically for high-risk user ${user_id}. A manual trigger option has been queued.`
+                  }
+                });
+              }
+            } catch (dbError) {
+              logger.error('Failed to log auto-trigger failure to database', {
+                error: dbError.message,
+                user_id
+              });
+            }
+          }
+        })();
+      }
+
       return { user_id, churn_risk, risk_level, confidence: 0.85 };
     } catch (error) {
       logger.error('Error in predictChurn service', { error: error.message, user_id });

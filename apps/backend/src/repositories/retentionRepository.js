@@ -53,6 +53,14 @@ class RetentionRepository {
     return result.rows[0];
   }
 
+  async getActiveRetentionAction(userId) {
+    const result = await db.query(
+      "SELECT * FROM retention_actions WHERE user_id = $1 AND status IN ('pending', 'claimed')",
+      [userId]
+    );
+    return result.rows[0];
+  }
+
   async updateRetentionActionStatus(id, status, action_type) {
     const result = await db.query(
       'UPDATE retention_actions SET status = $2, action_type = $3 WHERE id = $1 RETURNING id, executed_at',

@@ -13,6 +13,7 @@ const init = async (app, config) => {
   const simulationService = initSimulation(broadcast, retentionRepository);
   
   const retentionService = new RetentionService(cache, retentionRepository);
+  retentionService.broadcast = broadcast;
   const retentionController = new RetentionController(retentionService, broadcast);
 
   return { retentionController, simulationService };

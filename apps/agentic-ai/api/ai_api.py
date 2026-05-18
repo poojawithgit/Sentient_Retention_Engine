@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
+from typing import Optional
 import uvicorn
 import sys
 import os
@@ -19,6 +20,14 @@ retention_graph = build_workflow()
 
 class PredictionRequest(BaseModel):
     userId: str
+
+class PipelineTriggerRequest(BaseModel):
+    userId: str
+    plan_tier: Optional[str] = "Gold"
+    usage_score: Optional[float] = 15.0
+    complaints_count: Optional[int] = 0
+    network_drops: Optional[int] = 0
+    payment_status: Optional[str] = "Paid"
 
 @app.get("/")
 async def root():
@@ -138,6 +147,57 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str):
             })
         except:
             pass
+
+@app.post("/api/run-pipeline")
+async def run_pipeline(payload: PipelineTriggerRequest):
+    print(f"Triggering automated pipeline via REST for user: {payload.userId}", flush=True)
+    
+    # Initialize state matching the 9-agent RetentionState definition
+    initial_state = {
+        "customer_id": payload.userId,
+        "plan_tier": payload.plan_tier or "Gold",
+        "usage_last_30d": float(payload.usage_score if payload.usage_score is not None else 15.0),
+        "support_ticket_count": int(payload.complaints_count if payload.complaints_count is not None else 0),
+        "network_drop_events": int(payload.network_drops if payload.network_drops is not None else 0),
+        "payment_status": payload.payment_status or "Paid",
+        "billing_history": "Standard billing cycle",
+        "last_login": datetime.now().isoformat(),
+        "simulation_iterations": 0,
+        "agent_telemetry": [],
+        "audit_log": [],
+        "technical_failure": False,
+        "loop_count": 0,
+        "escalated_to_human": False
+    }
+    
+    try:
+        # Run graph using ainvoke
+        final_state = await retention_graph.ainvoke(initial_state)
+        
+        # Format a clean response detailing the pipeline outcome
+        response_payload = {
+            "status": "success",
+            "user_id": payload.userId,
+            "risk_score": final_state.get("risk_score"),
+            "risk_level": final_state.get("risk_level"),
+            "selected_strategy": final_state.get("selected_strategy"),
+            "decision_reasoning": (
+                final_state.get("decision_reasoning") or 
+                final_state.get("escalation_reason") or
+                final_state.get("message") or
+                "Pipeline execution complete"
+            ),
+            "final_action": final_state.get("final_action"),
+            "escalated_to_human": final_state.get("escalated_to_human", False),
+            "escalation_reason": final_state.get("escalation_reason"),
+            "specialist_queue_id": final_state.get("specialist_queue_id")
+        }
+        
+        return response_payload
+    except Exception as e:
+        error_msg = str(e)
+        print(f"Error executing automated pipeline for user {payload.userId}: {error_msg}", flush=True)
+        raise HTTPException(status_code=500, detail=f"Pipeline execution failed: {error_msg}")
 
 @app.post("/predict/churn")
 async def predict_churn(request: PredictionRequest):

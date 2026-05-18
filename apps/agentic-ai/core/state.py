@@ -60,6 +60,7 @@ class RetentionState(TypedDict):
     governance_logs: List[Dict[str, Any]]
     
     # Execution Metadata
+    active_agent: Optional[str]
     technical_failure: bool
     loop_count: int
     raw_customer_data: Optional[Dict[str, Any]]
