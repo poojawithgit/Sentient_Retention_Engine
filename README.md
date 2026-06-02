@@ -316,6 +316,6 @@ Alternatively, execute the contents of `infra/database/schema.sql` directly into
 We welcome contributions! Please follow our established AI Governance Guardrail rules. Any agent logic modification must not bypass the `GovernanceEngine`.
 Before submitting pull requests, run `python .agent/scripts/checklist.py .` to ensure 100% security and schema compliance.
 
-## License
+## 📄 Licensing
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
