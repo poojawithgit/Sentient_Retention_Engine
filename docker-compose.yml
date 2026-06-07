@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: sentient-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sentient_db}
+      POSTGRES_USER: ${POSTGRES_USER:-db_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_this_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sentient-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: sentient-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - sentient-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    image: sentient-backend:latest
+    container_name: sentient-backend
+    environment:
+      PORT: ${BACKEND_PORT:-8000}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      ML_SERVICE_URL: http://ml-service:8001
+      AGENT_SERVICE_URL: http://agent-service:8003
+      NODE_ENV: production
+      API_VERSION: v1
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      - postgres
+      - redis
+      - ml-service
+      - agent-service
+    networks:
+      - sentient-network
+
+  agent-service:
+    build:
+      context: .
+      dockerfile: ./agents/Dockerfile
+    image: sentient-agent-service:latest
+    container_name: sentient-agent-service
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+    ports:
+      - "8003:8003"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - sentient-network
+
+  ml-service:
+    build:
+      context: ./simulation/ml-service
+    image: sentient-ml-service:latest
+    container_name: sentient-ml-service
+    environment:
+      PORT: ${ML_SERVICE_PORT:-8001}
+      HOST: 0.0.0.0
+    ports:
+      - "${ML_SERVICE_PORT:-8001}:8001"
+    networks:
+      - sentient-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+    image: sentient-frontend:latest
+    container_name: sentient-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      - backend
+    networks:
+      - sentient-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  sentient-network:
+    driver: bridge

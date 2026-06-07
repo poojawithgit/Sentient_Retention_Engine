@@ -1,0 +1,10 @@
+node_modules
+**/node_modules
+/dist
+/dist/
+.env
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+.DS_Store
