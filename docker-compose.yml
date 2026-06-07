@@ -31,9 +31,6 @@ services:
 
   # Backend API Service
   backend:
-    build:
-      context: .
-      dockerfile: ./backend/Dockerfile
     image: ${REGISTRY_OWNER:-sentient-retention}/sentient-backend:latest
     container_name: sentient-backend
     environment:
